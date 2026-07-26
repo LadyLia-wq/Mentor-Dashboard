@@ -60,6 +60,20 @@ body{
 .pending-card{text-align:center;}
 .pending-card .icon{font-size:34px;margin-bottom:6px;}
 
+/* Password show/hide */
+.pw-field{position:relative;}
+.pw-field input{padding-right:38px;}
+.pw-toggle{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--muted);padding:5px;
+  display:flex;align-items:center;justify-content:center;border-radius:5px;
+}
+.pw-toggle:hover{color:var(--navy);background:var(--bg);}
+.pw-toggle svg{width:17px;height:17px;display:block;}
+.remember-row{display:flex;align-items:center;gap:7px;margin-top:12px;}
+.remember-row input[type=checkbox]{width:14px;height:14px;margin:0;}
+.remember-row label{font-size:12px;color:var(--text);margin:0;font-weight:500;cursor:pointer;}
+
 /* Header */
 .header{
   background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
@@ -89,6 +103,26 @@ body{
 }
 .role-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-2);}
 .live-dot{width:6px;height:6px;border-radius:50%;background:#57c785;box-shadow:0 0 0 3px rgba(87,199,133,.25);display:inline-block;margin-right:5px;}
+
+/* Block/Week banner */
+.period-banner{
+  margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;
+  padding:8px 12px;
+}
+.period-banner .period-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:13.5px;}
+.period-banner .period-sub{font-size:11px;color:#aebbd0;}
+.period-edit-btn{
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,.28);color:#fff;
+  padding:4px 10px;border-radius:6px;font-size:11.5px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;
+}
+.period-edit-btn:hover{background:rgba(255,255,255,0.24);}
+.period-edit-form{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.period-edit-form input{
+  width:64px;padding:5px 7px;border-radius:6px;border:1px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.95);font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+}
+.period-edit-form .btn{padding:5px 11px;font-size:11.5px;}
 
 /* Tabs */
 .tabs{display:flex;gap:8px;margin-bottom:18px;}
@@ -180,6 +214,21 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
 
 .activity-toggle{background:none;border:none;color:var(--teal);font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 0;}
 .activity-log{max-height:230px;overflow-y:auto;font-size:12px;margin-top:6px;}
+.period-value-btn{background:none;border:none;color:#fff;font:inherit;font-weight:700;padding:1px 3px;border-radius:4px;cursor:pointer;}
+.period-value-btn:hover,.period-value-btn:focus{background:rgba(255,255,255,.18);outline:none;}
+.past-toolbar{display:grid;grid-template-columns:2fr repeat(3,minmax(120px,1fr));gap:10px;margin:14px 0 18px;}
+.past-toolbar input,.past-toolbar select{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;background:#fff;font-family:'Inter',sans-serif;font-size:12.5px;}
+.past-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:20px;}
+.past-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:15px;box-shadow:0 2px 8px rgba(20,30,50,.04);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;}
+.past-card:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(20,30,50,.10);}
+.past-card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px;}
+.past-card-title{font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:var(--navy);}
+.past-card-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;}
+.past-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.past-chip{font-size:10.5px;font-weight:600;background:var(--bg);color:var(--muted);padding:4px 7px;border-radius:12px;}
+.past-preview{font-size:11.5px;line-height:1.5;color:var(--text);border-top:1px solid var(--border);padding-top:9px;}
+.past-preview div+div{margin-top:5px;}
+@media(max-width:760px){.past-toolbar{grid-template-columns:1fr 1fr}.past-toolbar input{grid-column:1/-1;}}
 .log-entry{padding:7px 0;border-bottom:1px dashed var(--border);color:var(--text);}
 .log-entry .ts{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;display:block;margin-top:1px;}
 .log-empty{color:var(--muted);font-size:12.5px;padding:8px 0;}
@@ -193,15 +242,29 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
 }
 .context-menu button:hover{background:var(--bg);}
 
+.context-menu.history-dropdown{
+  width:280px;max-width:90vw;padding:0;
+}
+.hist-head{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
+  padding:10px 12px 4px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;
+}
+.hist-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px;line-height:1;}
+.hist-close:hover{color:var(--text);}
+.hist-sub{padding:0 12px 8px;font-size:11px;color:var(--muted);}
+.hist-list{max-height:260px;overflow-y:auto;padding:0 12px 10px;}
+.hist-list .hist-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;white-space:normal;}
+.hist-list .hist-item:last-child{border-bottom:none;}
+.hist-list .who{font-weight:600;}
+.hist-list .change{font-family:'IBM Plex Mono',monospace;font-size:11.5px;margin-top:2px;word-break:break-word;}
+.hist-list .ts{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10.5px;margin-top:2px;display:block;}
+
 .modal-overlay{
   position:fixed;inset:0;background:rgba(15,22,35,.45);display:flex;align-items:center;justify-content:center;z-index:600;
 }
 .modal{background:#fff;border-radius:12px;padding:20px 22px;width:420px;max-width:92vw;max-height:80vh;overflow-y:auto;}
 .modal h3{font-family:'Poppins',sans-serif;font-size:15px;margin:0 0 3px;}
 .modal .sub{font-size:11.5px;color:var(--muted);margin-bottom:12px;}
-.hist-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;}
-.hist-item .who{font-weight:600;}
-.hist-item .change{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:2px;}
 .modal-close{float:right;background:none;border:none;font-size:16px;cursor:pointer;color:var(--muted);}
 
 .empty-state{padding:30px 10px;text-align:center;color:var(--muted);font-size:13.5px;}
@@ -229,7 +292,14 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
       <label>Email</label>
       <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="username">
       <label>Password</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+      <div class="pw-field">
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        <button type="button" class="pw-toggle" id="loginPasswordToggle" onclick="togglePwVisibility('loginPassword')" aria-label="Show password"></button>
+      </div>
+      <div class="remember-row">
+        <input type="checkbox" id="rememberMe">
+        <label for="rememberMe">Remember my email &amp; password on this device</label>
+      </div>
       <button class="btn" id="loginBtn" onclick="handleLogin()">Sign in</button>
       <button class="login-link" onclick="handleForgotPassword()">Forgot password?</button>
     </div>
@@ -240,9 +310,15 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
       <label>Email</label>
       <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="username">
       <label>Password</label>
-      <input type="password" id="signupPassword" placeholder="At least 6 characters" autocomplete="new-password">
+      <div class="pw-field">
+        <input type="password" id="signupPassword" placeholder="At least 6 characters" autocomplete="new-password">
+        <button type="button" class="pw-toggle" id="signupPasswordToggle" onclick="togglePwVisibility('signupPassword')" aria-label="Show password"></button>
+      </div>
       <label>Confirm password</label>
-      <input type="password" id="signupPassword2" placeholder="Repeat password" autocomplete="new-password">
+      <div class="pw-field">
+        <input type="password" id="signupPassword2" placeholder="Repeat password" autocomplete="new-password">
+        <button type="button" class="pw-toggle" id="signupPassword2Toggle" onclick="togglePwVisibility('signupPassword2')" aria-label="Show password"></button>
+      </div>
       <button class="btn" id="signupBtn" onclick="handleSignUp()">Create account</button>
     </div>
 
@@ -268,9 +344,15 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
     <h1>Set a new password</h1>
     <div class="sub">You followed a password reset link. Choose a new password below.</div>
     <label>New password</label>
-    <input type="password" id="recoveryPassword" placeholder="At least 6 characters">
+    <div class="pw-field">
+      <input type="password" id="recoveryPassword" placeholder="At least 6 characters">
+      <button type="button" class="pw-toggle" id="recoveryPasswordToggle" onclick="togglePwVisibility('recoveryPassword')" aria-label="Show password"></button>
+    </div>
     <label>Confirm new password</label>
-    <input type="password" id="recoveryPassword2" placeholder="Repeat password">
+    <div class="pw-field">
+      <input type="password" id="recoveryPassword2" placeholder="Repeat password">
+      <button type="button" class="pw-toggle" id="recoveryPassword2Toggle" onclick="togglePwVisibility('recoveryPassword2')" aria-label="Show password"></button>
+    </div>
     <button class="btn" id="recoveryBtn" onclick="handleSetNewPassword()">Save new password</button>
     <div class="login-error" id="recoveryError"></div>
   </div>
@@ -291,12 +373,13 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
           <span class="week-label" id="weekLabel"></span>
           <button onclick="shiftWeek(1)" title="Next week">›</button>
         </div>
-        <button class="btn ghost small" onclick="goThisWeek()">This week</button>
+        <button class="btn ghost small" id="pastActivityBtn" onclick="showPastActivity()">Past Activity</button>
         <button class="signout-btn" onclick="openChangePasswordModal()">Change password</button>
         <button class="signout-btn" onclick="handleLogout()">Sign out</button>
       </div>
     </div>
     <div class="role-badge"><span class="live-dot"></span><span id="roleBadgeText"></span></div>
+    <div class="period-banner" id="periodBanner"></div>
   </div>
 
   <div class="tabs">
@@ -336,6 +419,42 @@ function fmtTs(iso){
 }
 function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};}
 
+/* ---------------- Password show/hide icons ---------------- */
+const EYE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 1 11s4 7 11 7a9.26 9.26 0 0 0 5.39-1.61"/><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+function togglePwVisibility(id){
+  const el=document.getElementById(id);
+  const btn=document.getElementById(id+'Toggle');
+  const showing=el.type==='text';
+  el.type=showing?'password':'text';
+  if(btn){
+    btn.innerHTML=showing?EYE_ICON:EYE_OFF_ICON;
+    btn.setAttribute('aria-label',showing?'Show password':'Hide password');
+  }
+}
+function initPwToggleIcons(){
+  document.querySelectorAll('.pw-toggle').forEach(btn=>{ if(!btn.innerHTML.trim())btn.innerHTML=EYE_ICON; });
+}
+
+/* ---------------- Remember me ---------------- */
+const REMEMBER_KEY='mentorDashboard_rememberedLogin';
+function loadRememberedLogin(){
+  try{
+    const raw=localStorage.getItem(REMEMBER_KEY);
+    if(!raw)return;
+    const {email,password}=JSON.parse(raw);
+    if(email)document.getElementById('loginEmail').value=email;
+    if(password)document.getElementById('loginPassword').value=password;
+    document.getElementById('rememberMe').checked=true;
+  }catch(e){/* ignore malformed/blocked storage */}
+}
+function saveRememberedLogin(email,password){
+  try{localStorage.setItem(REMEMBER_KEY,JSON.stringify({email,password}));}catch(e){}
+}
+function clearRememberedLogin(){
+  try{localStorage.removeItem(REMEMBER_KEY);}catch(e){}
+}
+
 /* ---------------- State ---------------- */
 let mentors=[];
 let docData={};
@@ -343,15 +462,21 @@ let feedbackData={};
 let historyLog=[];
 let currentWeekDate=new Date();
 let currentWeekKey=weekKeyOf(currentWeekDate);
+let periodLabel=null; // {block, week} for currentWeekKey, if set
+let periodEditOpen=false;
 let role={type:'pending'};
 let currentProfile=null;
 let activeTab=1;
 let manageOpen=false;
 let activityOpen={1:false,2:false};
 let currentMenu=null;
+let openMenuKey=null;
 let realtimeChannel=null;
 let allProfiles=[];
 let usersOpen=false;
+let appView='dashboard';
+let allWeekLabels=[];
+let pastFilters={search:'',block:'',week:'',type:''};
 
 /* ============================================================
    Auth
@@ -359,6 +484,7 @@ let usersOpen=false;
 async function handleLogin(){
   const email=document.getElementById('loginEmail').value.trim();
   const password=document.getElementById('loginPassword').value;
+  const remember=document.getElementById('rememberMe').checked;
   const errEl=document.getElementById('loginError');
   errEl.style.display='none';
   if(!email||!password){errEl.textContent='Enter both email and password.';errEl.style.display='block';return;}
@@ -366,6 +492,7 @@ async function handleLogin(){
   const {data,error}=await sb.auth.signInWithPassword({email,password});
   btn.disabled=false;btn.textContent='Sign in';
   if(error){errEl.textContent=error.message;errEl.style.display='block';return;}
+  if(remember){saveRememberedLogin(email,password);}else{clearRememberedLogin();}
   await onAuthReady();
 }
 async function handleForgotPassword(){
@@ -433,13 +560,20 @@ function openChangePasswordModal(){
       <h3>Change password</h3>
       <div class="sub">Update the password for your own account.</div>
       <label style="font-size:12px;font-weight:600;display:block;margin:10px 0 5px;">New password</label>
-      <input type="password" id="cpNew" style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;">
+      <div class="pw-field">
+        <input type="password" id="cpNew" style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;">
+        <button type="button" class="pw-toggle" id="cpNewToggle" onclick="togglePwVisibility('cpNew')" aria-label="Show password"></button>
+      </div>
       <label style="font-size:12px;font-weight:600;display:block;margin:10px 0 5px;">Confirm new password</label>
-      <input type="password" id="cpNew2" style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;">
+      <div class="pw-field">
+        <input type="password" id="cpNew2" style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;">
+        <button type="button" class="pw-toggle" id="cpNew2Toggle" onclick="togglePwVisibility('cpNew2')" aria-label="Show password"></button>
+      </div>
       <div class="login-error" id="cpError"></div>
       <button class="btn" style="width:100%;margin-top:14px;" onclick="submitChangePassword()">Save</button>
     </div>`;
   document.body.appendChild(overlay);
+  initPwToggleIcons();
 }
 async function submitChangePassword(){
   const pw=document.getElementById('cpNew').value;
@@ -451,6 +585,10 @@ async function submitChangePassword(){
   const {error}=await sb.auth.updateUser({password:pw});
   if(error){errEl.textContent=error.message;errEl.style.display='block';return;}
   document.querySelector('.modal-overlay').remove();
+  const remembered=(()=>{try{return JSON.parse(localStorage.getItem(REMEMBER_KEY)||'null');}catch(e){return null;}})();
+  if(remembered && currentProfile && remembered.email===currentProfile.email){
+    saveRememberedLogin(remembered.email,pw);
+  }
   alert('Password updated.');
 }
 async function handleLogout(){
@@ -463,6 +601,7 @@ function showScreen(which){
   document.getElementById('pendingWrap').style.display= which==='pending'?'flex':'none';
   document.getElementById('appWrap').style.display= which==='app'?'block':'none';
   document.getElementById('recoveryWrap').style.display= which==='recovery'?'flex':'none';
+  if(which==='login'){loadRememberedLogin();}
 }
 
 async function ensureProfile(user){
@@ -512,6 +651,9 @@ async function loadHistory(){
   const {data,error}=await sb.from('history').select('*').order('ts',{ascending:false}).limit(500);
   if(error){console.error(error);historyLog=[];return;}
   historyLog=(data||[]).map(h=>({ts:h.ts,user:h.user_label,field:h.field,mentorId:h.mentor_id,mentorName:h.mentor_name,week:h.week,oldVal:h.old_val,newVal:h.new_val}));
+  const {data:labels,error:labelError}=await sb.from('week_labels').select('*').order('week',{ascending:false});
+  if(labelError){console.error(labelError);allWeekLabels=[];}
+  else{allWeekLabels=labels||[];}
 }
 async function loadWeekData(){
   const {data:docs,error:e1}=await sb.from('documentation').select('*').eq('week',currentWeekKey);
@@ -520,6 +662,7 @@ async function loadWeekData(){
   const {data:fbs,error:e2}=await sb.from('feedback').select('*').eq('week',currentWeekKey);
   feedbackData={};
   if(!e2)(fbs||[]).forEach(f=>{feedbackData[f.mentor_id]={reviewed:f.reviewed,smartGoal:f.smart_goal};});
+  await loadPeriodLabel();
 }
 function getDoc(mentorId){return docData[mentorId]||{mon:0,tue:0,wed:0,thu:0,fri:0,followup:null};}
 function getFeedback(mentorId){return feedbackData[mentorId]||{reviewed:null,smartGoal:''};}
@@ -539,6 +682,64 @@ function roleLabel(){
 }
 
 /* ============================================================
+   Block / Week period label (MSA-editable)
+   ============================================================ */
+async function loadPeriodLabel(){
+  periodLabel=null;
+  const {data,error}=await sb.from('week_labels').select('*').eq('week',currentWeekKey).maybeSingle();
+  if(!error && data){periodLabel={block:data.block_number,week:data.week_number};}
+}
+function editPeriodValue(field){
+  if(!isMSA())return;
+  const current=periodLabel ? (field==='block'?periodLabel.block:periodLabel.week) : '';
+  const label=field==='block'?'block':'week';
+  const raw=prompt(`Enter the ${label} number:`,current);
+  if(raw===null)return;
+  const value=n(raw);
+  if(!value){alert(`Enter a valid ${label} number.`);return;}
+  saveSinglePeriodValue(field,value);
+}
+
+function renderPeriodBanner(){
+  const el=document.getElementById('periodBanner');
+  if(!el)return;
+  const block=periodLabel?esc(periodLabel.block):'—';
+  const week=periodLabel?esc(periodLabel.week):'—';
+  const blockHtml=isMSA()?`<button class="period-value-btn" onclick="editPeriodValue('block')" title="Edit block number">${block}</button>`:block;
+  const weekHtml=isMSA()?`<button class="period-value-btn" onclick="editPeriodValue('week')" title="Edit week number">${week}</button>`:week;
+  el.innerHTML=`
+    <span class="period-label">Block ${blockHtml} &nbsp;·&nbsp; Week ${weekHtml}</span>
+    <span class="period-sub">${weekLabelOf(currentWeekDate)}</span>`;
+}
+
+async function saveSinglePeriodValue(field,value){
+  if(!isMSA())return;
+  const blockVal=field==='block'?value:(periodLabel?periodLabel.block:0);
+  const weekVal=field==='week'?value:(periodLabel?periodLabel.week:0);
+  if(!blockVal || !weekVal){
+    const other=field==='block'?'week':'block';
+    const raw=prompt(`Enter the ${other} number too:`,'');
+    if(raw===null)return;
+    const otherValue=n(raw);
+    if(!otherValue){alert(`Enter a valid ${other} number.`);return;}
+    return saveSinglePeriodValuePair(field,value,otherValue);
+  }
+  return saveSinglePeriodValuePair(field,value,field==='block'?weekVal:blockVal);
+}
+
+async function saveSinglePeriodValuePair(field,value,otherValue){
+  const blockVal=field==='block'?value:otherValue;
+  const weekVal=field==='week'?value:otherValue;
+  const oldLabel=periodLabel?`Block ${periodLabel.block} · Week ${periodLabel.week}`:'not set';
+  const {error}=await sb.from('week_labels').upsert({week:currentWeekKey,block_number:blockVal,week_number:weekVal},{onConflict:'week'});
+  if(error){alert('Could not save: '+error.message);return;}
+  await addHistory({field:'period-label',mentorId:null,mentorName:'',week:currentWeekKey,oldVal:oldLabel,newVal:`Block ${blockVal} · Week ${weekVal}`});
+  await loadPeriodLabel();
+  await loadHistory();
+  renderPeriodBanner();
+}
+
+/* ============================================================
    Realtime — keep everyone's view in sync
    ============================================================ */
 const refreshFromRemote=debounce(async ()=>{
@@ -555,19 +756,24 @@ function setupRealtime(){
     .on('postgres_changes',{event:'*',schema:'public',table:'documentation'},refreshFromRemote)
     .on('postgres_changes',{event:'*',schema:'public',table:'feedback'},refreshFromRemote)
     .on('postgres_changes',{event:'*',schema:'public',table:'history'},refreshFromRemote)
+    .on('postgres_changes',{event:'*',schema:'public',table:'week_labels'},refreshFromRemote)
     .subscribe();
 }
 
 /* ---------------- Week nav ---------------- */
 function shiftWeek(dir){
+  appView='dashboard';
   currentWeekDate=new Date(currentWeekDate);
   currentWeekDate.setDate(currentWeekDate.getDate()+dir*7);
   currentWeekKey=weekKeyOf(currentWeekDate);
+  periodEditOpen=false;
   loadWeekData().then(render);
 }
 function goThisWeek(){
+  appView='dashboard';
   currentWeekDate=new Date();
   currentWeekKey=weekKeyOf(currentWeekDate);
+  periodEditOpen=false;
   loadWeekData().then(render);
 }
 
@@ -575,7 +781,6 @@ function isMSA(){return role.type==='msa';}
 function isSelf(mentorId){return role.type==='mentor' && role.id===mentorId;}
 
 /* ---------------- Tabs ---------------- */
-function setTab(t){activeTab=t;render();}
 
 /* ============================================================
    Mentor management (MSA only)
@@ -779,46 +984,71 @@ async function handleSmartGoalChange(mentorId,value){
 }
 
 /* ============================================================
-   Context menu / history modal
+   Context menu / inline history dropdown
    ============================================================ */
-function removeContextMenu(){if(currentMenu){currentMenu.remove();currentMenu=null;}}
+function removeContextMenu(){
+  if(currentMenu){currentMenu.remove();currentMenu=null;}
+  openMenuKey=null;
+}
+document.addEventListener('click',(e)=>{
+  if(currentMenu && !currentMenu.contains(e.target)){removeContextMenu();}
+});
+document.addEventListener('contextmenu',(e)=>{
+  if(currentMenu && !currentMenu.contains(e.target) && !e.target.closest('[data-hist-field]')){
+    removeContextMenu();
+  }
+});
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape')removeContextMenu();
+});
+
 function openFieldMenu(evt,mentorId,field,label){
   evt.preventDefault();evt.stopPropagation();
+  const key=`${mentorId}:${field}`;
+  if(openMenuKey===key){removeContextMenu();return;}
   removeContextMenu();
+  openMenuKey=key;
   const menu=document.createElement('div');
   menu.className='context-menu';
   menu.style.top=evt.pageY+'px';menu.style.left=evt.pageX+'px';
-  menu.innerHTML=`<button onclick="openHistoryModal('${mentorId}','${field}',${JSON.stringify(label)})">🕘 Show history</button>`;
+  menu.onclick=(e)=>e.stopPropagation();
+  menu.innerHTML=`<button onclick="showHistoryInline('${mentorId}','${field}',${JSON.stringify(label)})">🕘 Show history</button>`;
   document.body.appendChild(menu);
   currentMenu=menu;
+  keepMenuOnScreen(menu);
 }
-function openHistoryModal(mentorId,field,label){
-  removeContextMenu();
+function keepMenuOnScreen(menu){
+  const rect=menu.getBoundingClientRect();
+  const overflowX=rect.right-window.innerWidth;
+  const overflowY=rect.bottom-window.innerHeight;
+  if(overflowX>0)menu.style.left=(parseFloat(menu.style.left)-overflowX-10)+'px';
+  if(overflowY>0)menu.style.top=(parseFloat(menu.style.top)-overflowY-10)+'px';
+}
+function showHistoryInline(mentorId,field,label){
+  if(!currentMenu)return;
   const weekScoped=field!=='mentor-list';
   let entries=historyLog.filter(h=>h.mentorId===mentorId && h.field===field && (!weekScoped || h.week===currentWeekKey));
   const totalCount=entries.length;
   if(role.type==='mentor'){entries=entries.slice(0,3);}
-  const overlay=document.createElement('div');
-  overlay.className='modal-overlay';
-  overlay.onclick=(e)=>{if(e.target===overlay)overlay.remove();};
   const listHtml=entries.length? entries.map(h=>`
       <div class="hist-item">
         <div class="who">${esc(h.user)}</div>
         <div class="change">${esc(h.oldVal)} → ${esc(h.newVal)}</div>
-        <div class="ts" style="color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:2px;">${fmtTs(h.ts)}</div>
+        <div class="ts">${fmtTs(h.ts)}</div>
       </div>`).join('')
     : `<div class="log-empty">No edits recorded yet.</div>`;
   const scopeNote = role.type==='mentor' && totalCount>3
-    ? `<div class="sub">Showing your last 3 edits (of ${totalCount} total). MSA can view full history.</div>`
-    : `<div class="sub">${weekScoped?('Week of '+weekLabelOf(currentWeekDate)):'All-time'} · ${totalCount} edit${totalCount===1?'':'s'}</div>`;
-  overlay.innerHTML=`
-    <div class="modal">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
-      <h3>${esc(label)}</h3>
-      ${scopeNote}
-      ${listHtml}
-    </div>`;
-  document.body.appendChild(overlay);
+    ? `Showing your last 3 edits (of ${totalCount} total). MSA can view full history.`
+    : `${weekScoped?('Week of '+weekLabelOf(currentWeekDate)):'All-time'} · ${totalCount} edit${totalCount===1?'':'s'}`;
+  currentMenu.classList.add('history-dropdown');
+  currentMenu.innerHTML=`
+    <div class="hist-head">
+      <span>${esc(label)}</span>
+      <button class="hist-close" onclick="removeContextMenu()">✕</button>
+    </div>
+    <div class="hist-sub">${esc(scopeNote)}</div>
+    <div class="hist-list">${listHtml}</div>`;
+  keepMenuOnScreen(currentMenu);
 }
 
 /* ============================================================
@@ -829,9 +1059,76 @@ function render(){
   document.getElementById('roleBadgeText').textContent =
     isMSA() ? 'Signed in as MSA — full edit access across both tabs'
             : `Signed in as ${role.name} — you can view team data and edit your own row on the Evaluator Feedback tab`;
-  document.getElementById('tabBtn1').classList.toggle('active',activeTab===1);
-  document.getElementById('tabBtn2').classList.toggle('active',activeTab===2);
-  document.getElementById('tabContent').innerHTML = activeTab===1 ? renderTab1() : renderTab2();
+  document.getElementById('tabBtn1').classList.toggle('active',appView==='dashboard'&&activeTab===1);
+  document.getElementById('tabBtn2').classList.toggle('active',appView==='dashboard'&&activeTab===2);
+  document.getElementById('pastActivityBtn').textContent=appView==='past'?'Back to Dashboard':'Past Activity';
+  document.getElementById('pastActivityBtn').onclick=appView==='past'?()=>openActivityWeek(currentWeekKey,activeTab):showPastActivity;
+  document.getElementById('tabContent').innerHTML = appView==='past' ? renderPastActivityPage() : (activeTab===1 ? renderTab1() : renderTab2());
+  renderPeriodBanner();
+}
+
+function showPastActivity(){appView='past';render();}
+function setTab(t){activeTab=t;appView='dashboard';render();}
+function periodForWeek(weekKey){return allWeekLabels.find(x=>x.week===weekKey)||null;}
+function activityTypeForField(field){return ['reviewed','smartGoal'].includes(field)?2:1;}
+function activityTypeLabel(type){return type===2?'Evaluator Feedback & Goals':'Documentation & Follow-Up';}
+function openActivityWeek(weekKey,tab){
+  currentWeekDate=new Date(`${weekKey}T12:00:00`);
+  currentWeekKey=weekKey;
+  activeTab=tab||1;
+  appView='dashboard';
+  periodEditOpen=false;
+  loadWeekData().then(render);
+}
+function updatePastFilter(key,value){pastFilters[key]=value;render();}
+function clearPastFilters(){pastFilters={search:'',block:'',week:'',type:''};render();}
+
+function renderPastActivityPage(){
+  const grouped={};
+  historyLog.filter(h=>h.week).forEach(h=>{
+    const type=activityTypeForField(h.field);
+    const key=`${h.week}|${type}`;
+    if(!grouped[key])grouped[key]={week:h.week,type,entries:[]};
+    grouped[key].entries.push(h);
+  });
+  let groups=Object.values(grouped).sort((a,b)=>b.week.localeCompare(a.week)||a.type-b.type);
+  const blocks=[...new Set(allWeekLabels.map(x=>String(x.block_number)).filter(Boolean))].sort((a,b)=>n(a)-n(b));
+  const weeks=[...new Set(allWeekLabels.map(x=>String(x.week_number)).filter(Boolean))].sort((a,b)=>n(a)-n(b));
+  groups=groups.filter(g=>{
+    const label=periodForWeek(g.week);
+    const hay=[activityTypeLabel(g.type),weekLabelOf(new Date(`${g.week}T12:00:00`)),label?.block_number,label?.week_number,...g.entries.map(e=>`${e.user} ${e.mentorName} ${e.oldVal} ${e.newVal}`)].join(' ').toLowerCase();
+    return (!pastFilters.search||hay.includes(pastFilters.search.toLowerCase())) &&
+      (!pastFilters.block||String(label?.block_number||'')===pastFilters.block) &&
+      (!pastFilters.week||String(label?.week_number||'')===pastFilters.week) &&
+      (!pastFilters.type||String(g.type)===pastFilters.type);
+  });
+  const cards=groups.map(g=>{
+    const label=periodForWeek(g.week);
+    const date=weekLabelOf(new Date(`${g.week}T12:00:00`));
+    const preview=g.entries.slice(0,3).map(e=>`<div><strong>${esc(e.user)}</strong>${e.mentorName?` · ${esc(e.mentorName)}`:''}: ${esc(e.oldVal)} → ${esc(e.newVal)}</div>`).join('');
+    return `<article class="past-card" tabindex="0" role="button" onclick="openActivityWeek('${g.week}',${g.type})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openActivityWeek('${g.week}',${g.type});}">
+      <div class="past-card-head"><div class="past-card-title">${activityTypeLabel(g.type)}</div><div class="past-card-date">${esc(date)}</div></div>
+      <div class="past-card-meta"><span class="past-chip">Block ${esc(label?.block_number??'—')}</span><span class="past-chip">Week ${esc(label?.week_number??'—')}</span><span class="past-chip">${g.entries.length} change${g.entries.length===1?'':'s'}</span></div>
+      <div class="past-preview">${preview||'No details available.'}</div>
+    </article>`;
+  }).join('');
+  return `<div class="panel">
+    <div class="panel-title"><span>Past Activity</span><button class="btn ghost small" onclick="clearPastFilters()">Clear filters</button></div>
+    <div class="panel-note">Activities are arranged from newest to oldest. Select a card to open that exact week and section. This page is viewable by every signed-in user.</div>
+    <div class="past-toolbar">
+      <input type="search" value="${esc(pastFilters.search)}" placeholder="Search mentor, editor, date or change" oninput="pastFilters.search=this.value;renderPastActivityPageIntoView()">
+      <select onchange="updatePastFilter('block',this.value)"><option value="">All blocks</option>${blocks.map(v=>`<option value="${esc(v)}" ${pastFilters.block===v?'selected':''}>Block ${esc(v)}</option>`).join('')}</select>
+      <select onchange="updatePastFilter('week',this.value)"><option value="">All weeks</option>${weeks.map(v=>`<option value="${esc(v)}" ${pastFilters.week===v?'selected':''}>Week ${esc(v)}</option>`).join('')}</select>
+      <select onchange="updatePastFilter('type',this.value)"><option value="">All activity types</option><option value="1" ${pastFilters.type==='1'?'selected':''}>Documentation & Follow-Up</option><option value="2" ${pastFilters.type==='2'?'selected':''}>Evaluator Feedback & Goals</option></select>
+    </div>
+    <div class="past-grid">${cards||'<div class="empty-state">No past activity matches these filters.</div>'}</div>
+  </div>`;
+}
+function renderPastActivityPageIntoView(){
+  const input=document.querySelector('.past-toolbar input');
+  if(input)pastFilters.search=input.value;
+  document.getElementById('tabContent').innerHTML=renderPastActivityPage();
+  const next=document.querySelector('.past-toolbar input');if(next){next.focus();next.setSelectionRange(next.value.length,next.value.length);}
 }
 
 function pct(mentorId,upTo){
@@ -866,7 +1163,7 @@ function renderTab1(){
     const friClass=fp>=100?'green':'red';
     const disabled=isMSA()?'':'disabled';
     const dayCell=(dayKey,dayLabel)=>`
-      <td oncontextmenu="openFieldMenu(event,'${m.id}','${dayKey}','${esc(m.name)} — ${dayLabel} documentation count')">
+      <td data-hist-field oncontextmenu="openFieldMenu(event,'${m.id}','${dayKey}','${esc(m.name)} — ${dayLabel} documentation count')">
         <input class="num-input" type="number" min="0" value="${n(d[dayKey])}" ${disabled}
           onchange="handleDocChange('${m.id}','${dayKey}',this.value)">
       </td>`;
@@ -879,13 +1176,13 @@ function renderTab1(){
         ${dayCell('wed','Wednesday')}
         ${dayCell('thu','Thursday')}
         ${dayCell('fri','Friday')}
-        <td oncontextmenu="openFieldMenu(event,'${m.id}','wed','${esc(m.name)} — Wednesday completion %')">
+        <td data-hist-field oncontextmenu="openFieldMenu(event,'${m.id}','wed','${esc(m.name)} — Wednesday completion %')">
           <span class="pill ${wedClass}">${wp}%</span>
         </td>
-        <td oncontextmenu="openFieldMenu(event,'${m.id}','fri','${esc(m.name)} — Friday completion %')">
+        <td data-hist-field oncontextmenu="openFieldMenu(event,'${m.id}','fri','${esc(m.name)} — Friday completion %')">
           <span class="pill ${friClass}">${fp}%</span>
         </td>
-        <td oncontextmenu="openFieldMenu(event,'${m.id}','followup','${esc(m.name)} — 24-hr follow-up')">
+        <td data-hist-field oncontextmenu="openFieldMenu(event,'${m.id}','followup','${esc(m.name)} — 24-hr follow-up')">
           <div class="toggle-group ${isMSA()?'':'readonly'}">
             <button class="toggle-btn yes ${d.followup==='yes'?'active':''}" ${isMSA()?`onclick="handleFollowupChange('${m.id}','yes')"`:'disabled'}>Yes</button>
             <button class="toggle-btn no ${d.followup==='no'?'active':''}" ${isMSA()?`onclick="handleFollowupChange('${m.id}','no')"`:'disabled'}>No</button>
@@ -920,8 +1217,7 @@ function renderTab1(){
         </table>
       </div>
       <div style="margin-top:10px;">
-        <button class="activity-toggle" onclick="activityOpen[1]=!activityOpen[1];render()">${activityOpen[1]?'▾':'▸'} Past activity — Documentation &amp; Follow-Up (${weekLabelOf(currentWeekDate)})</button>
-        ${activityOpen[1]?renderActivityLog(1):''}
+        <button class="btn ghost small" onclick="showPastActivity()">Past Activity</button>
       </div>
     </div>
 
@@ -983,13 +1279,13 @@ function renderTab2(){
     return `
       <tr>
         <td class="mentor-name">${esc(m.name)}</td>
-        <td oncontextmenu="openFieldMenu(event,'${m.id}','reviewed','${esc(m.name)} — reviewed evaluator feedback')">
+        <td data-hist-field oncontextmenu="openFieldMenu(event,'${m.id}','reviewed','${esc(m.name)} — reviewed evaluator feedback')">
           <div class="toggle-group ${canEdit?'':'readonly'}">
             <button class="toggle-btn yes ${f.reviewed==='yes'?'active':''}" ${canEdit?`onclick="handleReviewedChange('${m.id}','yes')"`:'disabled'}>Yes</button>
             <button class="toggle-btn no ${f.reviewed==='no'?'active':''}" ${canEdit?`onclick="handleReviewedChange('${m.id}','no')"`:'disabled'}>No</button>
           </div>
         </td>
-        <td oncontextmenu="openFieldMenu(event,'${m.id}','smartGoal','${esc(m.name)} — SMART goal')">
+        <td data-hist-field oncontextmenu="openFieldMenu(event,'${m.id}','smartGoal','${esc(m.name)} — SMART goal')">
           <textarea class="smart-goal" placeholder="What will you do better?" ${canEdit?'':'disabled'}
             onblur="handleSmartGoalChange('${m.id}',this.value)">${esc(f.smartGoal||'')}</textarea>
         </td>
@@ -1016,8 +1312,7 @@ function renderTab2(){
         </table>
       </div>
       <div style="margin-top:10px;">
-        <button class="activity-toggle" onclick="activityOpen[2]=!activityOpen[2];render()">${activityOpen[2]?'▾':'▸'} Past activity — Evaluator Feedback (${weekLabelOf(currentWeekDate)})</button>
-        ${activityOpen[2]?renderActivityLog(2):''}
+        <button class="btn ghost small" onclick="showPastActivity()">Past Activity</button>
       </div>
     </div>
     <p style="font-size:11.5px;color:var(--muted);">Green check = feedback marked reviewed and a SMART goal is filled in. Red X = one or both are still missing. Right-click a field to see its history — MSA sees everything, mentors see their own last 3 edits.</p>
@@ -1047,8 +1342,13 @@ sb.auth.onAuthStateChange((event)=>{
   if(event==='PASSWORD_RECOVERY'){showScreen('recovery');}
 });
 (async()=>{
+  initPwToggleIcons();
   const {data:{session}}=await sb.auth.getSession();
-  if(session){await onAuthReady();}else{showScreen('login');}
+  if(session){
+    await onAuthReady();
+  }else{
+    showScreen('login');
+  }
 })();
 </script>
 </body>
