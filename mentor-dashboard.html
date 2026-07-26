@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mentor Lead Measures Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --navy:#132238;
+  --navy-2:#1c3355;
+  --teal:#2f7a72;
+  --teal-2:#3f9a90;
+  --green:#1f7a4c;
+  --green-bg:#e2f5e9;
+  --red:#c23b3b;
+  --red-bg:#fbe8e8;
+  --amber:#b9791f;
+  --amber-bg:#faf0e0;
+  --bg:#f3f5f8;
+  --card:#ffffff;
+  --border:#e3e6ec;
+  --text:#1c2531;
+  --muted:#6b7686;
+  --radius:10px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.app{max-width:1180px;margin:0 auto;padding:0 20px 60px;}
+
+/* Login screen */
+.login-wrap{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+  padding:20px;
+}
+.login-card{
+  background:#fff;border-radius:14px;padding:32px 30px;width:360px;max-width:92vw;
+  box-shadow:0 18px 40px rgba(10,18,32,.35);
+}
+.login-card h1{font-family:'Poppins',sans-serif;font-size:19px;margin:0 0 2px;color:var(--navy);}
+.login-card .sub{font-size:12.5px;color:var(--muted);margin-bottom:20px;}
+.login-card label{font-size:12px;font-weight:600;color:var(--text);display:block;margin:14px 0 5px;}
+.login-card input{
+  width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:8px;font-size:13.5px;font-family:'Inter',sans-serif;
+}
+.login-card .btn{width:100%;margin-top:20px;padding:11px;font-size:13.5px;}
+.login-error{background:var(--red-bg);color:var(--red);font-size:12px;padding:8px 10px;border-radius:7px;margin-top:14px;display:none;}
+.login-note{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.5;}
+.login-link{background:none;border:none;color:var(--teal);font-size:12px;cursor:pointer;padding:0;margin-top:10px;}
+.login-tabs{display:flex;gap:4px;margin:4px 0 4px;border-bottom:1px solid var(--border);}
+.login-tab-btn{flex:1;background:none;border:none;padding:9px 0;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-family:'Inter',sans-serif;}
+.login-tab-btn.active{color:var(--navy);border-bottom-color:var(--teal);}
+.pending-card{text-align:center;}
+.pending-card .icon{font-size:34px;margin-bottom:6px;}
+
+/* Header */
+.header{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+  color:#fff;
+  margin:0 -20px 22px;
+  padding:22px 20px 18px;
+  border-radius:0 0 16px 16px;
+}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;}
+.header-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;letter-spacing:.2px;}
+.header-sub{font-size:12.5px;color:#aebbd0;margin-top:3px;font-weight:500;}
+.header-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.week-nav{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 6px;}
+.week-nav button{
+  background:rgba(255,255,255,0.14);border:none;color:#fff;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:13px;
+}
+.week-nav button:hover{background:rgba(255,255,255,0.28);}
+.week-label{font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:0 6px;white-space:nowrap;}
+.signout-btn{
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;
+  padding:7px 12px;border-radius:8px;font-size:12.5px;cursor:pointer;font-family:'Inter',sans-serif;
+}
+.signout-btn:hover{background:rgba(255,255,255,0.2);}
+.role-badge{
+  margin-top:12px;font-size:12.5px;background:rgba(255,255,255,.08);
+  display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.2);
+}
+.role-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-2);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#57c785;box-shadow:0 0 0 3px rgba(87,199,133,.25);display:inline-block;margin-right:5px;}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;margin-bottom:18px;}
+.tab-btn{
+  background:var(--card);border:1px solid var(--border);color:var(--muted);
+  padding:10px 18px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer;font-family:'Inter',sans-serif;
+}
+.tab-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* Summary cards */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:20px;}
+.summary-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;
+}
+.summary-card .label{font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.summary-card .value{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;margin-top:4px;}
+.summary-card .value.green{color:var(--green);}
+.summary-card .value.red{color:var(--red);}
+.summary-card .value.teal{color:var(--teal);}
+
+/* Panel / table */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 6px;margin-bottom:20px;}
+.panel-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;margin:0 0 2px;display:flex;justify-content:space-between;align-items:center;}
+.panel-note{font-size:12px;color:var(--muted);margin:2px 0 14px;}
+.btn{
+  background:var(--teal);color:#fff;border:none;padding:7px 13px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;
+}
+.btn:hover{background:var(--teal-2);}
+.btn.ghost{background:transparent;color:var(--teal);border:1px solid var(--teal);}
+.btn.small{padding:4px 9px;font-size:11.5px;}
+.btn.danger{background:transparent;color:var(--red);border:1px solid var(--red);}
+.btn:disabled{opacity:.5;cursor:default;}
+
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{
+  text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);
+  border-bottom:2px solid var(--border);padding:9px 8px;white-space:nowrap;
+}
+td{padding:10px 8px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap;}
+tr:hover td{background:#fafbfc;}
+.mentor-name{font-weight:600;}
+.mentee-count{color:var(--muted);font-size:11.5px;}
+.mentor-id-tag{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10.5px;}
+
+.num-input{
+  width:44px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px;
+  border:1px solid var(--border);border-radius:6px;padding:5px 2px;background:#fff;
+}
+.num-input:disabled{background:#f4f5f7;color:var(--muted);border-color:transparent;}
+
+.pulse-dots{display:flex;gap:4px;align-items:center;}
+.dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--border);background:#fff;}
+.dot.filled{background:var(--teal);border-color:var(--teal);}
+.dot.checkpoint{box-shadow:0 0 0 2px var(--amber-bg);}
+
+.pill{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12.5px;
+  padding:4px 9px;border-radius:20px;display:inline-block;min-width:44px;text-align:center;
+}
+.pill.green{background:var(--green-bg);color:var(--green);}
+.pill.red{background:var(--red-bg);color:var(--red);}
+
+.toggle-group{display:inline-flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;}
+.toggle-btn{
+  border:none;background:#fff;color:var(--muted);padding:5px 10px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;
+}
+.toggle-btn.yes.active{background:var(--green);color:#fff;}
+.toggle-btn.no.active{background:var(--red);color:#fff;}
+.toggle-btn:disabled{cursor:default;}
+.toggle-group.readonly .toggle-btn{cursor:default;}
+
+.status-icon{font-size:16px;}
+.status-icon.ok{color:var(--green);}
+.status-icon.bad{color:var(--red);}
+
+textarea.smart-goal{
+  width:230px;min-height:52px;font-family:'Inter',sans-serif;font-size:12.5px;border:1px solid var(--border);
+  border-radius:7px;padding:7px 9px;resize:vertical;
+}
+textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
+
+.manage-panel{background:#f8f9fb;border:1px solid var(--border);border-radius:9px;padding:14px;margin:10px 0 18px;}
+.manage-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.manage-row input[type=text]{flex:1;min-width:140px;padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;}
+.manage-row input[type=number]{width:80px;padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;}
+.manage-id{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);width:44px;}
+
+.activity-toggle{background:none;border:none;color:var(--teal);font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 0;}
+.activity-log{max-height:230px;overflow-y:auto;font-size:12px;margin-top:6px;}
+.log-entry{padding:7px 0;border-bottom:1px dashed var(--border);color:var(--text);}
+.log-entry .ts{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;display:block;margin-top:1px;}
+.log-empty{color:var(--muted);font-size:12.5px;padding:8px 0;}
+
+.context-menu{
+  position:absolute;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 6px 18px rgba(20,30,50,.16);
+  z-index:500;overflow:hidden;
+}
+.context-menu button{
+  display:block;width:100%;text-align:left;background:none;border:none;padding:9px 16px;font-size:12.5px;cursor:pointer;font-family:'Inter',sans-serif;
+}
+.context-menu button:hover{background:var(--bg);}
+
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(15,22,35,.45);display:flex;align-items:center;justify-content:center;z-index:600;
+}
+.modal{background:#fff;border-radius:12px;padding:20px 22px;width:420px;max-width:92vw;max-height:80vh;overflow-y:auto;}
+.modal h3{font-family:'Poppins',sans-serif;font-size:15px;margin:0 0 3px;}
+.modal .sub{font-size:11.5px;color:var(--muted);margin-bottom:12px;}
+.hist-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;}
+.hist-item .who{font-weight:600;}
+.hist-item .change{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:2px;}
+.modal-close{float:right;background:none;border:none;font-size:16px;cursor:pointer;color:var(--muted);}
+
+.empty-state{padding:30px 10px;text-align:center;color:var(--muted);font-size:13.5px;}
+
+@media(max-width:640px){
+  .header-title{font-size:18px;}
+  textarea.smart-goal{width:170px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card" id="loginCard">
+    <h1>Lead Measures Dashboard</h1>
+    <div class="sub" id="loginSub">Sign in, or create your own account below.</div>
+
+    <div class="login-tabs">
+      <button class="login-tab-btn active" id="tabSignIn" onclick="switchAuthMode('signin')">Sign in</button>
+      <button class="login-tab-btn" id="tabSignUp" onclick="switchAuthMode('signup')">Sign up</button>
+    </div>
+
+    <div id="signInForm">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="username">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+      <button class="btn" id="loginBtn" onclick="handleLogin()">Sign in</button>
+      <button class="login-link" onclick="handleForgotPassword()">Forgot password?</button>
+    </div>
+
+    <div id="signUpForm" style="display:none;">
+      <label>Full name</label>
+      <input type="text" id="signupFullName" placeholder="Jane Mensah" autocomplete="name">
+      <label>Email</label>
+      <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="username">
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="At least 6 characters" autocomplete="new-password">
+      <label>Confirm password</label>
+      <input type="password" id="signupPassword2" placeholder="Repeat password" autocomplete="new-password">
+      <button class="btn" id="signupBtn" onclick="handleSignUp()">Create account</button>
+    </div>
+
+    <div class="login-error" id="loginError"></div>
+    <div class="login-note">After signing up (or your first sign-in), the MSA still needs to link your account to your name — or grant MSA access — before you'll see the dashboard.</div>
+  </div>
+</div>
+
+<!-- ================= PENDING SCREEN (logged in, not yet linked) ================= -->
+<div class="login-wrap" id="pendingWrap" style="display:none;">
+  <div class="login-card pending-card">
+    <div class="icon">⏳</div>
+    <h1>Almost there</h1>
+    <div class="sub" id="pendingText">Your account is set up, but it hasn't been linked to a mentor yet.</div>
+    <div class="login-note">Ask the MSA to link your login to your name in the mentor roster. This usually only takes a minute on their end.</div>
+    <button class="btn ghost" style="margin-top:16px;width:100%;" onclick="handleLogout()">Sign out</button>
+  </div>
+</div>
+
+<!-- ================= PASSWORD RESET (from emailed link) ================= -->
+<div class="login-wrap" id="recoveryWrap" style="display:none;">
+  <div class="login-card">
+    <h1>Set a new password</h1>
+    <div class="sub">You followed a password reset link. Choose a new password below.</div>
+    <label>New password</label>
+    <input type="password" id="recoveryPassword" placeholder="At least 6 characters">
+    <label>Confirm new password</label>
+    <input type="password" id="recoveryPassword2" placeholder="Repeat password">
+    <button class="btn" id="recoveryBtn" onclick="handleSetNewPassword()">Save new password</button>
+    <div class="login-error" id="recoveryError"></div>
+  </div>
+</div>
+
+<!-- ================= MAIN APP ================= -->
+<div class="app" id="appWrap" style="display:none;">
+
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-title">Lead Measures Dashboard</div>
+        <div class="header-sub">Academic coaching · weekly cadence of accountability</div>
+      </div>
+      <div class="header-controls">
+        <div class="week-nav">
+          <button onclick="shiftWeek(-1)" title="Previous week">‹</button>
+          <span class="week-label" id="weekLabel"></span>
+          <button onclick="shiftWeek(1)" title="Next week">›</button>
+        </div>
+        <button class="btn ghost small" onclick="goThisWeek()">This week</button>
+        <button class="signout-btn" onclick="openChangePasswordModal()">Change password</button>
+        <button class="signout-btn" onclick="handleLogout()">Sign out</button>
+      </div>
+    </div>
+    <div class="role-badge"><span class="live-dot"></span><span id="roleBadgeText"></span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn" id="tabBtn1" onclick="setTab(1)">Documentation &amp; Follow-Up</button>
+    <button class="tab-btn" id="tabBtn2" onclick="setTab(2)">Evaluator Feedback &amp; Goals</button>
+  </div>
+
+  <div id="tabContent"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ============================================================
+   Supabase setup
+   ============================================================ */
+const SUPABASE_URL='https://lyxrrgtcadbfqqopokvz.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5eHJyZ3RjYWRiZnFxb3Bva3Z6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzExNjYsImV4cCI6MjEwMDY0NzE2Nn0.wegyTyKMaFzXHvbJ_A5BdkfTR-vna7tdPQOAoIWMqVA';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+/* ---------------- Utilities ---------------- */
+function uid(){return 'm_'+Math.random().toString(36).slice(2,10);}
+function n(v){return Number(v)||0;}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function getMonday(d){const date=new Date(d);const day=date.getDay();const diff=date.getDate()-day+(day===0?-6:1);const m=new Date(date);m.setDate(diff);m.setHours(0,0,0,0);return m;}
+function weekKeyOf(d){const m=getMonday(d);return m.toISOString().slice(0,10);}
+function weekLabelOf(d){
+  const m=getMonday(d);const f=new Date(m);f.setDate(f.getDate()+4);
+  const opts={month:'short',day:'numeric'};
+  const sameMonth=m.getMonth()===f.getMonth();
+  const left=m.toLocaleDateString('en-US',opts);
+  const right=sameMonth?f.getDate():f.toLocaleDateString('en-US',opts);
+  return `${left} – ${right}, ${f.getFullYear()}`;
+}
+function fmtTs(iso){
+  const d=new Date(iso);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};}
+
+/* ---------------- State ---------------- */
+let mentors=[];
+let docData={};
+let feedbackData={};
+let historyLog=[];
+let currentWeekDate=new Date();
+let currentWeekKey=weekKeyOf(currentWeekDate);
+let role={type:'pending'};
+let currentProfile=null;
+let activeTab=1;
+let manageOpen=false;
+let activityOpen={1:false,2:false};
+let currentMenu=null;
+let realtimeChannel=null;
+let allProfiles=[];
+let usersOpen=false;
+
+/* ============================================================
+   Auth
+   ============================================================ */
+async function handleLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  const errEl=document.getElementById('loginError');
+  errEl.style.display='none';
+  if(!email||!password){errEl.textContent='Enter both email and password.';errEl.style.display='block';return;}
+  const btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in…';
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  btn.disabled=false;btn.textContent='Sign in';
+  if(error){errEl.textContent=error.message;errEl.style.display='block';return;}
+  await onAuthReady();
+}
+async function handleForgotPassword(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const errEl=document.getElementById('loginError');
+  if(!email){errEl.textContent='Enter your email above first, then click "Forgot password?" again.';errEl.style.display='block';return;}
+  const {error}=await sb.auth.resetPasswordForEmail(email);
+  errEl.style.display='block';
+  errEl.style.background='var(--green-bg)';errEl.style.color='var(--green)';
+  errEl.textContent=error? error.message : 'Password reset email sent — check your inbox. (If the link doesn\'t bring you back here correctly, sign in with your temporary password instead and use "Change password" in the app.)';
+}
+function switchAuthMode(mode){
+  document.getElementById('tabSignIn').classList.toggle('active',mode==='signin');
+  document.getElementById('tabSignUp').classList.toggle('active',mode==='signup');
+  document.getElementById('signInForm').style.display=mode==='signin'?'block':'none';
+  document.getElementById('signUpForm').style.display=mode==='signup'?'block':'none';
+  const errEl=document.getElementById('loginError');
+  errEl.style.display='none';errEl.style.background='var(--red-bg)';errEl.style.color='var(--red)';
+}
+async function handleSignUp(){
+  const fullName=document.getElementById('signupFullName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const pw=document.getElementById('signupPassword').value;
+  const pw2=document.getElementById('signupPassword2').value;
+  const errEl=document.getElementById('loginError');
+  errEl.style.background='var(--red-bg)';errEl.style.color='var(--red)';errEl.style.display='none';
+  if(!fullName){errEl.textContent='Enter your full name.';errEl.style.display='block';return;}
+  if(!email||!pw){errEl.textContent='Enter an email and password.';errEl.style.display='block';return;}
+  if(pw.length<6){errEl.textContent='Password should be at least 6 characters.';errEl.style.display='block';return;}
+  if(pw!==pw2){errEl.textContent='Passwords do not match.';errEl.style.display='block';return;}
+  const btn=document.getElementById('signupBtn');btn.disabled=true;btn.textContent='Creating account…';
+  const {data,error}=await sb.auth.signUp({email,password:pw,options:{data:{full_name:fullName}}});
+  btn.disabled=false;btn.textContent='Create account';
+  if(error){errEl.textContent=error.message;errEl.style.display='block';return;}
+  if(data.session){
+    await onAuthReady();
+  }else{
+    errEl.style.background='var(--green-bg)';errEl.style.color='var(--green)';
+    errEl.textContent='Account created — check your email to confirm it, then sign in.';
+    errEl.style.display='block';
+    switchAuthMode('signin');
+  }
+}
+async function handleSetNewPassword(){
+  const pw=document.getElementById('recoveryPassword').value;
+  const pw2=document.getElementById('recoveryPassword2').value;
+  const errEl=document.getElementById('recoveryError');
+  errEl.style.display='none';
+  if(!pw||pw.length<6){errEl.textContent='Password should be at least 6 characters.';errEl.style.display='block';return;}
+  if(pw!==pw2){errEl.textContent='Passwords do not match.';errEl.style.display='block';return;}
+  const btn=document.getElementById('recoveryBtn');btn.disabled=true;btn.textContent='Saving…';
+  const {error}=await sb.auth.updateUser({password:pw});
+  btn.disabled=false;btn.textContent='Save new password';
+  if(error){errEl.textContent=error.message;errEl.style.display='block';return;}
+  await onAuthReady();
+}
+function openChangePasswordModal(){
+  removeContextMenu();
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay';
+  overlay.onclick=(e)=>{if(e.target===overlay)overlay.remove();};
+  overlay.innerHTML=`
+    <div class="modal">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+      <h3>Change password</h3>
+      <div class="sub">Update the password for your own account.</div>
+      <label style="font-size:12px;font-weight:600;display:block;margin:10px 0 5px;">New password</label>
+      <input type="password" id="cpNew" style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;">
+      <label style="font-size:12px;font-weight:600;display:block;margin:10px 0 5px;">Confirm new password</label>
+      <input type="password" id="cpNew2" style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;">
+      <div class="login-error" id="cpError"></div>
+      <button class="btn" style="width:100%;margin-top:14px;" onclick="submitChangePassword()">Save</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+async function submitChangePassword(){
+  const pw=document.getElementById('cpNew').value;
+  const pw2=document.getElementById('cpNew2').value;
+  const errEl=document.getElementById('cpError');
+  errEl.style.display='none';
+  if(!pw||pw.length<6){errEl.textContent='Password should be at least 6 characters.';errEl.style.display='block';return;}
+  if(pw!==pw2){errEl.textContent='Passwords do not match.';errEl.style.display='block';return;}
+  const {error}=await sb.auth.updateUser({password:pw});
+  if(error){errEl.textContent=error.message;errEl.style.display='block';return;}
+  document.querySelector('.modal-overlay').remove();
+  alert('Password updated.');
+}
+async function handleLogout(){
+  if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null;}
+  await sb.auth.signOut();
+  showScreen('login');
+}
+function showScreen(which){
+  document.getElementById('loginWrap').style.display= which==='login'?'flex':'none';
+  document.getElementById('pendingWrap').style.display= which==='pending'?'flex':'none';
+  document.getElementById('appWrap').style.display= which==='app'?'block':'none';
+  document.getElementById('recoveryWrap').style.display= which==='recovery'?'flex':'none';
+}
+
+async function ensureProfile(user){
+  let {data:profile}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
+  if(!profile){
+    const displayName=user.user_metadata?.full_name || (user.email||'').split('@')[0];
+    const {data:created,error}=await sb.from('profiles').insert({id:user.id,email:user.email,display_name:displayName}).select().maybeSingle();
+    if(error){console.error('profile create failed',error);}
+    profile=created;
+  }
+  return profile;
+}
+
+async function onAuthReady(){
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){showScreen('login');return;}
+  currentProfile=await ensureProfile(user);
+  await loadMentors();
+  if(currentProfile && currentProfile.is_msa){
+    role={type:'msa'};
+  }else if(currentProfile && currentProfile.mentor_id && mentors.find(m=>m.id===currentProfile.mentor_id)){
+    const m=mentors.find(m=>m.id===currentProfile.mentor_id);
+    role={type:'mentor',id:m.id,name:m.name};
+  }else{
+    role={type:'pending'};
+    document.getElementById('pendingText').textContent=
+      `Signed in as ${esc(currentProfile?currentProfile.email:user.email)}, but this account isn't linked to a mentor or marked as MSA yet.`;
+    showScreen('pending');
+    return;
+  }
+  await loadHistory();
+  await loadWeekData();
+  setupRealtime();
+  showScreen('app');
+  render();
+}
+
+/* ============================================================
+   Data loading (Supabase)
+   ============================================================ */
+async function loadMentors(){
+  const {data,error}=await sb.from('mentors').select('*').order('name',{ascending:true});
+  if(error){console.error(error);mentors=[];return;}
+  mentors=(data||[]).map(m=>({id:m.id,name:m.name,mentees:m.mentees}));
+}
+async function loadHistory(){
+  const {data,error}=await sb.from('history').select('*').order('ts',{ascending:false}).limit(500);
+  if(error){console.error(error);historyLog=[];return;}
+  historyLog=(data||[]).map(h=>({ts:h.ts,user:h.user_label,field:h.field,mentorId:h.mentor_id,mentorName:h.mentor_name,week:h.week,oldVal:h.old_val,newVal:h.new_val}));
+}
+async function loadWeekData(){
+  const {data:docs,error:e1}=await sb.from('documentation').select('*').eq('week',currentWeekKey);
+  docData={};
+  if(!e1)(docs||[]).forEach(d=>{docData[d.mentor_id]={mon:d.mon,tue:d.tue,wed:d.wed,thu:d.thu,fri:d.fri,followup:d.followup};});
+  const {data:fbs,error:e2}=await sb.from('feedback').select('*').eq('week',currentWeekKey);
+  feedbackData={};
+  if(!e2)(fbs||[]).forEach(f=>{feedbackData[f.mentor_id]={reviewed:f.reviewed,smartGoal:f.smart_goal};});
+}
+function getDoc(mentorId){return docData[mentorId]||{mon:0,tue:0,wed:0,thu:0,fri:0,followup:null};}
+function getFeedback(mentorId){return feedbackData[mentorId]||{reviewed:null,smartGoal:''};}
+
+async function addHistory(entry){
+  const row={
+    user_label:roleLabel(),field:entry.field,mentor_id:entry.mentorId,mentor_name:entry.mentorName,
+    week:entry.week,old_val:String(entry.oldVal),new_val:String(entry.newVal)
+  };
+  const {error}=await sb.from('history').insert(row);
+  if(error)console.error('history insert failed',error);
+}
+function roleLabel(){
+  if(role.type==='msa')return 'MSA';
+  if(role.type==='mentor')return `Mentor · ${role.name}`;
+  return 'Unknown';
+}
+
+/* ============================================================
+   Realtime — keep everyone's view in sync
+   ============================================================ */
+const refreshFromRemote=debounce(async ()=>{
+  await loadMentors();
+  await loadHistory();
+  await loadWeekData();
+  render();
+},400);
+
+function setupRealtime(){
+  if(realtimeChannel)return;
+  realtimeChannel=sb.channel('dashboard-sync')
+    .on('postgres_changes',{event:'*',schema:'public',table:'mentors'},refreshFromRemote)
+    .on('postgres_changes',{event:'*',schema:'public',table:'documentation'},refreshFromRemote)
+    .on('postgres_changes',{event:'*',schema:'public',table:'feedback'},refreshFromRemote)
+    .on('postgres_changes',{event:'*',schema:'public',table:'history'},refreshFromRemote)
+    .subscribe();
+}
+
+/* ---------------- Week nav ---------------- */
+function shiftWeek(dir){
+  currentWeekDate=new Date(currentWeekDate);
+  currentWeekDate.setDate(currentWeekDate.getDate()+dir*7);
+  currentWeekKey=weekKeyOf(currentWeekDate);
+  loadWeekData().then(render);
+}
+function goThisWeek(){
+  currentWeekDate=new Date();
+  currentWeekKey=weekKeyOf(currentWeekDate);
+  loadWeekData().then(render);
+}
+
+function isMSA(){return role.type==='msa';}
+function isSelf(mentorId){return role.type==='mentor' && role.id===mentorId;}
+
+/* ---------------- Tabs ---------------- */
+function setTab(t){activeTab=t;render();}
+
+/* ============================================================
+   Mentor management (MSA only)
+   ============================================================ */
+function toggleManage(){manageOpen=!manageOpen;render();}
+
+async function handleAddMentor(){
+  if(!isMSA())return;
+  const nameEl=document.getElementById('newMentorName');
+  const menteesEl=document.getElementById('newMentorMentees');
+  const name=nameEl.value.trim();
+  const mentees=n(menteesEl.value);
+  if(!name){nameEl.focus();return;}
+  const id=uid();
+  const {error}=await sb.from('mentors').insert({id,name,mentees});
+  if(error){alert('Could not add mentor: '+error.message);return;}
+  await addHistory({field:'mentor-list',mentorId:id,mentorName:name,week:null,oldVal:'—',newVal:`Added "${name}" (${mentees} mentees)`});
+  nameEl.value='';menteesEl.value='';
+  await loadMentors();await loadHistory();render();
+}
+async function handleMentorFieldEdit(id,field,value){
+  if(!isMSA())return;
+  const m=mentors.find(x=>x.id===id);
+  if(!m)return;
+  const oldVal=m[field];
+  const newVal=field==='mentees'?n(value):String(value).trim();
+  if(String(oldVal)===String(newVal))return;
+  const {error}=await sb.from('mentors').update({[field]:newVal}).eq('id',id);
+  if(error){alert('Update failed: '+error.message);return;}
+  await addHistory({field:'mentor-list',mentorId:id,mentorName:m.name,week:null,oldVal,newVal:`${field}: ${oldVal} → ${newVal}`});
+  await loadMentors();await loadHistory();render();
+}
+async function handleRemoveMentor(id){
+  if(!isMSA())return;
+  const m=mentors.find(x=>x.id===id);
+  if(!m)return;
+  if(!confirm(`Remove ${m.name} from the mentor list? Their past records stay in history.`))return;
+  const {error}=await sb.from('mentors').delete().eq('id',id);
+  if(error){alert('Remove failed: '+error.message);return;}
+  await addHistory({field:'mentor-list',mentorId:id,mentorName:m.name,week:null,oldVal:m.name,newVal:'Removed from mentor list'});
+  await loadMentors();await loadHistory();render();
+}
+
+/* ============================================================
+   Users & roles (MSA only)
+   ============================================================ */
+async function loadAllProfiles(){
+  if(!isMSA())return;
+  const {data,error}=await sb.from('profiles').select('*').order('email',{ascending:true});
+  if(error){console.error(error);allProfiles=[];return;}
+  allProfiles=data||[];
+}
+function toggleUsers(){
+  usersOpen=!usersOpen;
+  if(usersOpen){loadAllProfiles().then(render);}else{render();}
+}
+function renderUsersPanel(){
+  const roleOptionsFor=(currentVal)=>
+    `<option value="unassigned" ${currentVal==='unassigned'?'selected':''}>Unassigned</option>` +
+    `<option value="msa" ${currentVal==='msa'?'selected':''}>MSA</option>` +
+    mentors.map(m=>`<option value="mentor:${m.id}" ${currentVal==='mentor:'+m.id?'selected':''}>Mentor: ${esc(m.name)}</option>`).join('');
+  const rows=allProfiles.map(p=>{
+    const currentVal = p.is_msa ? 'msa' : (p.mentor_id ? `mentor:${p.mentor_id}` : 'unassigned');
+    return `
+      <div class="manage-row">
+        <span style="flex:1;min-width:170px;font-size:12.5px;">
+          <strong>${esc(p.display_name || '(no name)')}</strong><br>
+          <span style="color:var(--muted);font-size:11px;">${esc(p.email||'')}</span>
+        </span>
+        <select id="roleSel-${p.id}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;">
+          ${roleOptionsFor(currentVal)}
+        </select>
+        <button class="btn small" onclick="saveUserRole('${p.id}')">Save</button>
+      </div>`;
+  }).join('');
+  return `
+    <div class="manage-panel">
+      <div class="panel-note" style="margin-top:0;">Link each signed-up account to a mentor, or grant MSA access.</div>
+      ${rows || '<div class="log-empty">No accounts have signed in yet.</div>'}
+      <div style="border-top:1px dashed var(--border);margin-top:14px;padding-top:14px;">
+        <div class="panel-note" style="margin-top:0;">Create a new account directly (they can sign in right away):</div>
+        <div class="manage-row">
+          <input type="text" id="newUserFullName" placeholder="Full name">
+          <input type="text" id="newUserEmail" placeholder="Email">
+        </div>
+        <div class="manage-row">
+          <input type="text" id="newUserPassword" placeholder="Temporary password">
+          <select id="newUserRole" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;">
+            ${roleOptionsFor('unassigned')}
+          </select>
+          <button class="btn small" onclick="handleCreateUser()">Create account</button>
+        </div>
+      </div>
+    </div>`;
+}
+async function saveUserRole(id){
+  const val=document.getElementById(`roleSel-${id}`).value;
+  const is_msa=val==='msa';
+  const mentor_id=val.startsWith('mentor:')?val.split(':')[1]:null;
+  const {error}=await sb.from('profiles').update({is_msa,mentor_id}).eq('id',id);
+  if(error){alert('Could not update role: '+error.message);return;}
+  await loadAllProfiles();
+  render();
+}
+async function handleCreateUser(){
+  const fullName=document.getElementById('newUserFullName').value.trim();
+  const email=document.getElementById('newUserEmail').value.trim();
+  const password=document.getElementById('newUserPassword').value;
+  const roleVal=document.getElementById('newUserRole').value;
+  if(!fullName){alert('Enter their full name.');return;}
+  if(!email||!password){alert('Enter an email and a temporary password.');return;}
+  if(password.length<6){alert('Temporary password should be at least 6 characters.');return;}
+  const is_msa=roleVal==='msa';
+  const mentor_id=roleVal.startsWith('mentor:')?roleVal.split(':')[1]:null;
+  const {data:{session}}=await sb.auth.getSession();
+  try{
+    const resp=await fetch(`${SUPABASE_URL}/functions/v1/create-mentor-user`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
+      body:JSON.stringify({
+        email,password,
+        role:is_msa?'msa':(mentor_id?'mentor':'unassigned'),
+        mentor_id,
+        display_name:fullName
+      })
+    });
+    const json=await resp.json();
+    if(!resp.ok){alert('Could not create account: '+(json.error||resp.statusText));return;}
+    alert(`Account created for ${fullName}. Share the email and temporary password with them directly — they should change it on first login.`);
+    document.getElementById('newUserFullName').value='';
+    document.getElementById('newUserEmail').value='';
+    document.getElementById('newUserPassword').value='';
+    await loadAllProfiles();
+    render();
+  }catch(e){
+    alert('Request failed: '+e.message+'. Make sure the create-mentor-user Edge Function has been deployed in Supabase.');
+  }
+}
+
+/* ============================================================
+   Tab 1 edits
+   ============================================================ */
+async function handleDocChange(mentorId,day,value){
+  if(!isMSA())return;
+  const cur={...(docData[mentorId]||{mon:0,tue:0,wed:0,thu:0,fri:0,followup:null})};
+  const oldVal=cur[day]||0;
+  const newVal=Math.max(0,n(value));
+  if(oldVal===newVal){render();return;}
+  cur[day]=newVal;
+  const {error}=await sb.from('documentation').upsert({mentor_id:mentorId,week:currentWeekKey,...cur},{onConflict:'mentor_id,week'});
+  if(error){alert('Save failed: '+error.message);return;}
+  docData[mentorId]=cur;
+  const m=mentors.find(x=>x.id===mentorId);
+  await addHistory({field:day,mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal,newVal});
+  await loadHistory();render();
+}
+async function handleFollowupChange(mentorId,value){
+  if(!isMSA())return;
+  const cur={...(docData[mentorId]||{mon:0,tue:0,wed:0,thu:0,fri:0,followup:null})};
+  const oldVal=cur.followup;
+  if(oldVal===value)return;
+  cur.followup=value;
+  const {error}=await sb.from('documentation').upsert({mentor_id:mentorId,week:currentWeekKey,...cur},{onConflict:'mentor_id,week'});
+  if(error){alert('Save failed: '+error.message);return;}
+  docData[mentorId]=cur;
+  const m=mentors.find(x=>x.id===mentorId);
+  await addHistory({field:'followup',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:value});
+  await loadHistory();render();
+}
+
+/* ============================================================
+   Tab 2 edits
+   ============================================================ */
+async function handleReviewedChange(mentorId,value){
+  if(!isMSA() && !isSelf(mentorId))return;
+  const cur={...(feedbackData[mentorId]||{reviewed:null,smartGoal:''})};
+  const oldVal=cur.reviewed;
+  if(oldVal===value)return;
+  cur.reviewed=value;
+  const {error}=await sb.from('feedback').upsert({mentor_id:mentorId,week:currentWeekKey,reviewed:cur.reviewed,smart_goal:cur.smartGoal||''},{onConflict:'mentor_id,week'});
+  if(error){alert('Save failed: '+error.message);return;}
+  feedbackData[mentorId]=cur;
+  const m=mentors.find(x=>x.id===mentorId);
+  await addHistory({field:'reviewed',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:value});
+  await loadHistory();render();
+}
+async function handleSmartGoalChange(mentorId,value){
+  if(!isMSA() && !isSelf(mentorId))return;
+  const cur={...(feedbackData[mentorId]||{reviewed:null,smartGoal:''})};
+  const oldVal=cur.smartGoal||'';
+  if(oldVal===value)return;
+  cur.smartGoal=value;
+  const {error}=await sb.from('feedback').upsert({mentor_id:mentorId,week:currentWeekKey,reviewed:cur.reviewed,smart_goal:cur.smartGoal},{onConflict:'mentor_id,week'});
+  if(error){alert('Save failed: '+error.message);return;}
+  feedbackData[mentorId]=cur;
+  const m=mentors.find(x=>x.id===mentorId);
+  await addHistory({field:'smartGoal',mentorId,mentorName:m?m.name:'',week:currentWeekKey,
+    oldVal:oldVal?`"${oldVal.slice(0,40)}${oldVal.length>40?'…':''}"`:'empty',
+    newVal:value?`"${value.slice(0,40)}${value.length>40?'…':''}"`:'empty'});
+  await loadHistory();render();
+}
+
+/* ============================================================
+   Context menu / history modal
+   ============================================================ */
+function removeContextMenu(){if(currentMenu){currentMenu.remove();currentMenu=null;}}
+function openFieldMenu(evt,mentorId,field,label){
+  evt.preventDefault();evt.stopPropagation();
+  removeContextMenu();
+  const menu=document.createElement('div');
+  menu.className='context-menu';
+  menu.style.top=evt.pageY+'px';menu.style.left=evt.pageX+'px';
+  menu.innerHTML=`<button onclick="openHistoryModal('${mentorId}','${field}',${JSON.stringify(label)})">🕘 Show history</button>`;
+  document.body.appendChild(menu);
+  currentMenu=menu;
+}
+function openHistoryModal(mentorId,field,label){
+  removeContextMenu();
+  const weekScoped=field!=='mentor-list';
+  let entries=historyLog.filter(h=>h.mentorId===mentorId && h.field===field && (!weekScoped || h.week===currentWeekKey));
+  const totalCount=entries.length;
+  if(role.type==='mentor'){entries=entries.slice(0,3);}
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay';
+  overlay.onclick=(e)=>{if(e.target===overlay)overlay.remove();};
+  const listHtml=entries.length? entries.map(h=>`
+      <div class="hist-item">
+        <div class="who">${esc(h.user)}</div>
+        <div class="change">${esc(h.oldVal)} → ${esc(h.newVal)}</div>
+        <div class="ts" style="color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:2px;">${fmtTs(h.ts)}</div>
+      </div>`).join('')
+    : `<div class="log-empty">No edits recorded yet.</div>`;
+  const scopeNote = role.type==='mentor' && totalCount>3
+    ? `<div class="sub">Showing your last 3 edits (of ${totalCount} total). MSA can view full history.</div>`
+    : `<div class="sub">${weekScoped?('Week of '+weekLabelOf(currentWeekDate)):'All-time'} · ${totalCount} edit${totalCount===1?'':'s'}</div>`;
+  overlay.innerHTML=`
+    <div class="modal">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+      <h3>${esc(label)}</h3>
+      ${scopeNote}
+      ${listHtml}
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+function render(){
+  document.getElementById('weekLabel').textContent=weekLabelOf(currentWeekDate);
+  document.getElementById('roleBadgeText').textContent =
+    isMSA() ? 'Signed in as MSA — full edit access across both tabs'
+            : `Signed in as ${role.name} — you can view team data and edit your own row on the Evaluator Feedback tab`;
+  document.getElementById('tabBtn1').classList.toggle('active',activeTab===1);
+  document.getElementById('tabBtn2').classList.toggle('active',activeTab===2);
+  document.getElementById('tabContent').innerHTML = activeTab===1 ? renderTab1() : renderTab2();
+}
+
+function pct(mentorId,upTo){
+  const d=getDoc(mentorId);
+  const m=mentors.find(x=>x.id===mentorId);
+  const mentees=m?n(m.mentees):0;
+  const days=['mon','tue','wed','thu','fri'].slice(0,upTo);
+  const sum=days.reduce((a,k)=>a+n(d[k]),0);
+  return mentees>0?Math.round(sum/mentees*100):0;
+}
+function pulseDots(mentorId){
+  const d=getDoc(mentorId);
+  const days=['mon','tue','wed','thu','fri'];
+  return `<div class="pulse-dots" title="Days documented this week">` +
+    days.map(k=>`<span class="dot ${n(d[k])>0?'filled':''} ${k==='wed'?'checkpoint':''}"></span>`).join('') +
+    `</div>`;
+}
+
+function renderTab1(){
+  if(mentors.length===0)return renderManageOnlyEmpty();
+  const wedPcts=mentors.map(m=>pct(m.id,3));
+  const friPcts=mentors.map(m=>pct(m.id,5));
+  const avgWed=Math.round(wedPcts.reduce((a,b)=>a+b,0)/mentors.length)||0;
+  const avgFri=Math.round(friPcts.reduce((a,b)=>a+b,0)/mentors.length)||0;
+  const wedOnTrack=wedPcts.filter(p=>p>=50).length;
+  const followupsDone=mentors.filter(m=>getDoc(m.id).followup==='yes').length;
+
+  const rows=mentors.map(m=>{
+    const d=getDoc(m.id);
+    const wp=pct(m.id,3), fp=pct(m.id,5);
+    const wedClass=wp>=50?'green':'red';
+    const friClass=fp>=100?'green':'red';
+    const disabled=isMSA()?'':'disabled';
+    const dayCell=(dayKey,dayLabel)=>`
+      <td oncontextmenu="openFieldMenu(event,'${m.id}','${dayKey}','${esc(m.name)} — ${dayLabel} documentation count')">
+        <input class="num-input" type="number" min="0" value="${n(d[dayKey])}" ${disabled}
+          onchange="handleDocChange('${m.id}','${dayKey}',this.value)">
+      </td>`;
+    return `
+      <tr>
+        <td class="mentor-name">${esc(m.name)}<div class="mentee-count">${n(m.mentees)} mentees</div></td>
+        <td>${pulseDots(m.id)}</td>
+        ${dayCell('mon','Monday')}
+        ${dayCell('tue','Tuesday')}
+        ${dayCell('wed','Wednesday')}
+        ${dayCell('thu','Thursday')}
+        ${dayCell('fri','Friday')}
+        <td oncontextmenu="openFieldMenu(event,'${m.id}','wed','${esc(m.name)} — Wednesday completion %')">
+          <span class="pill ${wedClass}">${wp}%</span>
+        </td>
+        <td oncontextmenu="openFieldMenu(event,'${m.id}','fri','${esc(m.name)} — Friday completion %')">
+          <span class="pill ${friClass}">${fp}%</span>
+        </td>
+        <td oncontextmenu="openFieldMenu(event,'${m.id}','followup','${esc(m.name)} — 24-hr follow-up')">
+          <div class="toggle-group ${isMSA()?'':'readonly'}">
+            <button class="toggle-btn yes ${d.followup==='yes'?'active':''}" ${isMSA()?`onclick="handleFollowupChange('${m.id}','yes')"`:'disabled'}>Yes</button>
+            <button class="toggle-btn no ${d.followup==='no'?'active':''}" ${isMSA()?`onclick="handleFollowupChange('${m.id}','no')"`:'disabled'}>No</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <div class="summary-grid">
+      <div class="summary-card"><div class="label">Team avg — Wed</div><div class="value ${avgWed>=50?'green':'red'}">${avgWed}%</div></div>
+      <div class="summary-card"><div class="label">Team avg — Fri</div><div class="value ${avgFri>=100?'green':'red'}">${avgFri}%</div></div>
+      <div class="summary-card"><div class="label">On track by Wed</div><div class="value teal">${wedOnTrack}/${mentors.length}</div></div>
+      <div class="summary-card"><div class="label">Follow-ups completed</div><div class="value teal">${followupsDone}/${mentors.length}</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">
+        Mentors &amp; roster
+        ${isMSA()?`<button class="btn ghost small" onclick="toggleManage()">${manageOpen?'Close':'Manage mentors'}</button>`:''}
+      </div>
+      <div class="panel-note">Mentor names and mentee counts are set by the MSA and stay fixed for everyone else.</div>
+      ${isMSA() && manageOpen ? renderManagePanel() : ''}
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Mentor</th><th>Cadence</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th>
+            <th>Wed %</th><th>Fri %</th><th>Follow-up &lt;24h</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="activity-toggle" onclick="activityOpen[1]=!activityOpen[1];render()">${activityOpen[1]?'▾':'▸'} Past activity — Documentation &amp; Follow-Up (${weekLabelOf(currentWeekDate)})</button>
+        ${activityOpen[1]?renderActivityLog(1):''}
+      </div>
+    </div>
+
+    ${isMSA() ? `
+    <div class="panel">
+      <div class="panel-title">
+        Manage users &amp; roles
+        <button class="btn ghost small" onclick="toggleUsers()">${usersOpen?'Close':'Manage users'}</button>
+      </div>
+      <div class="panel-note">Create logins for mentors, or change who's linked to which mentor / who has MSA access.</div>
+      ${usersOpen?renderUsersPanel():''}
+    </div>` : ''}
+
+    <p style="font-size:11.5px;color:var(--muted);">Daily count = number of mentees documented that day. Wed % / Fri % is the running total of mentees documented ÷ total mentees, colored green once the 50% (Wed) or 100% (Fri) goal is met. Right-click any count, percentage, or follow-up cell to view its edit history.</p>
+  `;
+}
+
+function renderManageOnlyEmpty(){
+  return `
+    <div class="panel">
+      <div class="panel-title">Mentors &amp; roster</div>
+      <div class="panel-note">No mentors yet. ${isMSA()?'Add your team below to get started.':'Ask the MSA to add the mentor roster.'}</div>
+      ${isMSA()?renderManagePanel():`<div class="empty-state">Nothing to show yet.</div>`}
+    </div>`;
+}
+
+function renderManagePanel(){
+  const rows=mentors.map(m=>`
+    <div class="manage-row">
+      <span class="manage-id">${esc(m.id)}</span>
+      <input type="text" value="${esc(m.name)}" onchange="handleMentorFieldEdit('${m.id}','name',this.value)">
+      <input type="number" min="0" value="${n(m.mentees)}" onchange="handleMentorFieldEdit('${m.id}','mentees',this.value)">
+      <button class="btn danger small" onclick="handleRemoveMentor('${m.id}')">Remove</button>
+    </div>`).join('');
+  return `
+    <div class="manage-panel">
+      ${rows}
+      <div class="manage-row" style="margin-top:10px;border-top:1px dashed var(--border);padding-top:10px;">
+        <input type="text" id="newMentorName" placeholder="Mentor name">
+        <input type="number" id="newMentorMentees" placeholder="Mentees" min="0">
+        <button class="btn small" onclick="handleAddMentor()">Add mentor</button>
+      </div>
+      <div class="panel-note" style="margin-top:8px;">The ID next to each mentor (e.g. m1) is what you'll enter as <code>mentor_id</code> in their Supabase profile row to link their login.</div>
+    </div>`;
+}
+
+function renderTab2(){
+  if(mentors.length===0)return renderManageOnlyEmpty();
+  const reviewedCount=mentors.filter(m=>getFeedback(m.id).reviewed==='yes').length;
+  const goalsCount=mentors.filter(m=>(getFeedback(m.id).smartGoal||'').trim().length>0).length;
+  const completeCount=mentors.filter(m=>{
+    const f=getFeedback(m.id);return f.reviewed==='yes' && (f.smartGoal||'').trim().length>0;
+  }).length;
+
+  const rows=mentors.map(m=>{
+    const f=getFeedback(m.id);
+    const canEdit=isMSA()||isSelf(m.id);
+    const complete=f.reviewed==='yes' && (f.smartGoal||'').trim().length>0;
+    return `
+      <tr>
+        <td class="mentor-name">${esc(m.name)}</td>
+        <td oncontextmenu="openFieldMenu(event,'${m.id}','reviewed','${esc(m.name)} — reviewed evaluator feedback')">
+          <div class="toggle-group ${canEdit?'':'readonly'}">
+            <button class="toggle-btn yes ${f.reviewed==='yes'?'active':''}" ${canEdit?`onclick="handleReviewedChange('${m.id}','yes')"`:'disabled'}>Yes</button>
+            <button class="toggle-btn no ${f.reviewed==='no'?'active':''}" ${canEdit?`onclick="handleReviewedChange('${m.id}','no')"`:'disabled'}>No</button>
+          </div>
+        </td>
+        <td oncontextmenu="openFieldMenu(event,'${m.id}','smartGoal','${esc(m.name)} — SMART goal')">
+          <textarea class="smart-goal" placeholder="What will you do better?" ${canEdit?'':'disabled'}
+            onblur="handleSmartGoalChange('${m.id}',this.value)">${esc(f.smartGoal||'')}</textarea>
+        </td>
+        <td style="text-align:center;">
+          <span class="status-icon ${complete?'ok':'bad'}">${complete?'✓':'✕'}</span>
+        </td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <div class="summary-grid">
+      <div class="summary-card"><div class="label">Reviewed feedback</div><div class="value teal">${reviewedCount}/${mentors.length}</div></div>
+      <div class="summary-card"><div class="label">SMART goals submitted</div><div class="value teal">${goalsCount}/${mentors.length}</div></div>
+      <div class="summary-card"><div class="label">Fully complete</div><div class="value ${completeCount===mentors.length?'green':'red'}">${completeCount}/${mentors.length}</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Evaluator feedback &amp; SMART goals</div>
+      <div class="panel-note">Each mentor reviews their evaluator feedback in the mentor portal, then confirms it here and adds a SMART goal. Mentors can only edit their own row; MSA can edit any row.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mentor</th><th>Reviewed?</th><th>SMART goal</th><th>Status</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="activity-toggle" onclick="activityOpen[2]=!activityOpen[2];render()">${activityOpen[2]?'▾':'▸'} Past activity — Evaluator Feedback (${weekLabelOf(currentWeekDate)})</button>
+        ${activityOpen[2]?renderActivityLog(2):''}
+      </div>
+    </div>
+    <p style="font-size:11.5px;color:var(--muted);">Green check = feedback marked reviewed and a SMART goal is filled in. Red X = one or both are still missing. Right-click a field to see its history — MSA sees everything, mentors see their own last 3 edits.</p>
+  `;
+}
+
+function renderActivityLog(tab){
+  const tab1Fields=['mon','tue','wed','thu','fri','followup','mentor-list'];
+  const tab2Fields=['reviewed','smartGoal'];
+  const fields=tab===1?tab1Fields:tab2Fields;
+  let entries=historyLog.filter(h=>fields.includes(h.field) && (h.field==='mentor-list' || h.week===currentWeekKey));
+  if(role.type==='mentor' && tab===2){entries=entries.filter(h=>h.mentorId===role.id);}
+  entries=entries.slice(0,25);
+  if(entries.length===0)return `<div class="log-empty">No activity recorded for this week yet.</div>`;
+  return `<div class="activity-log">${entries.map(h=>`
+    <div class="log-entry">
+      <strong>${esc(h.user)}</strong> — ${esc(h.mentorName||'')}: ${esc(h.oldVal)} → ${esc(h.newVal)}
+      <span class="ts">${fmtTs(h.ts)}</span>
+    </div>`).join('')}</div>`;
+}
+
+/* ============================================================
+   Boot
+   ============================================================ */
+sb.auth.onAuthStateChange((event)=>{
+  if(event==='SIGNED_OUT'){showScreen('login');}
+  if(event==='PASSWORD_RECOVERY'){showScreen('recovery');}
+});
+(async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){await onAuthReady();}else{showScreen('login');}
+})();
+</script>
+</body>
+</html>
