@@ -427,8 +427,32 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 function uid(){return 'm_'+Math.random().toString(36).slice(2,10);}
 function n(v){return Number(v)||0;}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function getMonday(d){const date=new Date(d);const day=date.getDay();const diff=date.getDate()-day+(day===0?-6:1);const m=new Date(date);m.setDate(diff);m.setHours(0,0,0,0);return m;}
-function weekKeyOf(d){const m=getMonday(d);return m.toISOString().slice(0,10);}
+/* ---------------- Timezone-anchored week keys ----------------
+   All mentors share one reference timezone (Mountain Time) so
+   everyone agrees on which calendar week is "current," regardless
+   of what timezone their own device happens to be set to. */
+const REFERENCE_TZ='America/Denver';
+function getDatePartsInTz(d,timeZone){
+  const fmt=new Intl.DateTimeFormat('en-US',{timeZone,year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'});
+  const parts=fmt.formatToParts(d);
+  const get=(type)=>parts.find(p=>p.type===type).value;
+  const weekdayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+  return{year:Number(get('year')),month:Number(get('month')),day:Number(get('day')),weekday:weekdayMap[get('weekday')]};
+}
+function getMonday(d){
+  const {year,month,day,weekday}=getDatePartsInTz(d,REFERENCE_TZ);
+  // Build a UTC-noon date from the reference-timezone date parts so
+  // day-of-month math never crosses a DST/UTC boundary unexpectedly.
+  const asUTCNoon=new Date(Date.UTC(year,month-1,day,12,0,0));
+  const diff=weekday===0?-6:1-weekday; // shift back to Monday
+  asUTCNoon.setUTCDate(asUTCNoon.getUTCDate()+diff);
+  return asUTCNoon;
+}
+function pad2(x){return String(x).padStart(2,'0');}
+function weekKeyOf(d){
+  const m=getMonday(d);
+  return `${m.getUTCFullYear()}-${pad2(m.getUTCMonth()+1)}-${pad2(m.getUTCDate())}`;
+}
 function weekLabelOf(d){
   const m=getMonday(d);const f=new Date(m);f.setDate(f.getDate()+4);
   const opts={month:'short',day:'numeric'};
