@@ -269,6 +269,37 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
 
 .empty-state{padding:30px 10px;text-align:center;color:var(--muted);font-size:13.5px;}
 
+/* Flash / toast notifications */
+.flash-container{
+  position:fixed;top:16px;right:16px;z-index:900;
+  display:flex;flex-direction:column;gap:10px;
+  width:320px;max-width:calc(100vw - 32px);
+}
+.flash{
+  background:#fff;border-left:4px solid var(--teal);border-radius:8px;
+  box-shadow:0 10px 26px rgba(20,30,50,.18);padding:11px 12px;
+  font-size:12.5px;line-height:1.45;display:flex;align-items:flex-start;gap:9px;
+  animation:flashIn .22s ease;
+}
+.flash.success{border-left-color:var(--green);}
+.flash.error{border-left-color:var(--red);}
+.flash.warning{border-left-color:var(--amber);}
+.flash.info{border-left-color:var(--teal);}
+.flash-icon{font-size:14px;line-height:1;margin-top:1px;flex-shrink:0;}
+.flash.success .flash-icon{color:var(--green);}
+.flash.error .flash-icon{color:var(--red);}
+.flash.warning .flash-icon{color:var(--amber);}
+.flash.info .flash-icon{color:var(--teal);}
+.flash-body{flex:1;color:var(--text);word-break:break-word;}
+.flash-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0;line-height:1;flex-shrink:0;}
+.flash-close:hover{color:var(--text);}
+.flash.leaving{animation:flashOut .18s ease forwards;}
+@keyframes flashIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
+@keyframes flashOut{to{opacity:0;transform:translateX(18px);}}
+@media(max-width:480px){
+  .flash-container{left:12px;right:12px;top:12px;width:auto;}
+}
+
 /* Initial authentication loading screen */
 .loading-wrap{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
@@ -291,6 +322,9 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
 </style>
 </head>
 <body>
+
+<!-- ================= FLASH / TOAST NOTIFICATIONS ================= -->
+<div class="flash-container" id="flashContainer" aria-live="polite"></div>
 
 <!-- ================= INITIAL LOADING SCREEN ================= -->
 <div class="loading-wrap" id="loadingWrap">
@@ -427,6 +461,33 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 function uid(){return 'm_'+Math.random().toString(36).slice(2,10);}
 function n(v){return Number(v)||0;}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ---------------- Flash / toast notifications ----------------
+   type: 'success' | 'error' | 'warning' | 'info'
+   Non-blocking replacement for alert(). Auto-dismisses; can also
+   be dismissed manually via the ✕ button. */
+function showFlash(message,type='info',duration=4500){
+  const container=document.getElementById('flashContainer');
+  if(!container)return;
+  const icons={success:'✓',error:'⚠',warning:'!',info:'ℹ'};
+  const el=document.createElement('div');
+  el.className=`flash ${type}`;
+  el.innerHTML=`
+    <span class="flash-icon">${icons[type]||icons.info}</span>
+    <span class="flash-body">${esc(message)}</span>
+    <button class="flash-close" aria-label="Dismiss">✕</button>`;
+  container.appendChild(el);
+  let dismissed=false;
+  const remove=()=>{
+    if(dismissed)return;
+    dismissed=true;
+    el.classList.add('leaving');
+    setTimeout(()=>el.remove(),200);
+  };
+  el.querySelector('.flash-close').onclick=remove;
+  if(duration)setTimeout(remove,duration);
+}
+
 /* ---------------- Timezone-anchored week keys ----------------
    All mentors share one reference timezone (Mountain Time) so
    everyone agrees on which calendar week is "current," regardless
@@ -637,7 +698,7 @@ async function submitChangePassword(){
   if(remembered && currentProfile && remembered.email===currentProfile.email){
     saveRememberedLogin(remembered.email,pw);
   }
-  alert('Password updated.');
+  showFlash('Password updated.','success');
 }
 async function handleLogout(){
   if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null;}
@@ -745,7 +806,7 @@ function editPeriodValue(field){
   const raw=prompt(`Enter the ${label} number:`,current);
   if(raw===null)return;
   const value=n(raw);
-  if(!value){alert(`Enter a valid ${label} number.`);return;}
+  if(!value){showFlash(`Enter a valid ${label} number.`,'warning');return;}
   saveSinglePeriodValue(field,value);
 }
 
@@ -770,7 +831,7 @@ async function saveSinglePeriodValue(field,value){
     const raw=prompt(`Enter the ${other} number too:`,'');
     if(raw===null)return;
     const otherValue=n(raw);
-    if(!otherValue){alert(`Enter a valid ${other} number.`);return;}
+    if(!otherValue){showFlash(`Enter a valid ${other} number.`,'warning');return;}
     return saveSinglePeriodValuePair(field,value,otherValue);
   }
   return saveSinglePeriodValuePair(field,value,field==='block'?weekVal:blockVal);
@@ -781,11 +842,12 @@ async function saveSinglePeriodValuePair(field,value,otherValue){
   const weekVal=field==='week'?value:otherValue;
   const oldLabel=periodLabel?`Block ${periodLabel.block} · Week ${periodLabel.week}`:'not set';
   const {error}=await sb.from('week_labels').upsert({week:currentWeekKey,block_number:blockVal,week_number:weekVal},{onConflict:'week'});
-  if(error){alert('Could not save: '+error.message);return;}
+  if(error){showFlash('Could not save: '+error.message,'error');return;}
   await addHistory({field:'period-label',mentorId:null,mentorName:'',week:currentWeekKey,oldVal:oldLabel,newVal:`Block ${blockVal} · Week ${weekVal}`});
   await loadPeriodLabel();
   await loadHistory();
   renderPeriodBanner();
+  showFlash(`Updated to Block ${blockVal} · Week ${weekVal}.`,'success');
 }
 
 /* ============================================================
@@ -845,10 +907,11 @@ async function handleAddMentor(){
   if(!name){nameEl.focus();return;}
   const id=uid();
   const {error}=await sb.from('mentors').insert({id,name,mentees});
-  if(error){alert('Could not add mentor: '+error.message);return;}
+  if(error){showFlash('Could not add mentor: '+error.message,'error');return;}
   await addHistory({field:'mentor-list',mentorId:id,mentorName:name,week:null,oldVal:'—',newVal:`Added "${name}" (${mentees} mentees)`});
   nameEl.value='';menteesEl.value='';
   await loadMentors();await loadHistory();render();
+  showFlash(`Added ${name} to the mentor roster.`,'success');
 }
 async function handleMentorFieldEdit(id,field,value){
   if(!isMSA())return;
@@ -858,7 +921,7 @@ async function handleMentorFieldEdit(id,field,value){
   const newVal=field==='mentees'?n(value):String(value).trim();
   if(String(oldVal)===String(newVal))return;
   const {error}=await sb.from('mentors').update({[field]:newVal}).eq('id',id);
-  if(error){alert('Update failed: '+error.message);return;}
+  if(error){showFlash('Update failed: '+error.message,'error');return;}
   await addHistory({field:'mentor-list',mentorId:id,mentorName:m.name,week:null,oldVal,newVal:`${field}: ${oldVal} → ${newVal}`});
   await loadMentors();await loadHistory();render();
 }
@@ -868,9 +931,10 @@ async function handleRemoveMentor(id){
   if(!m)return;
   if(!confirm(`Remove ${m.name} from the mentor list? Their past records stay in history.`))return;
   const {error}=await sb.from('mentors').delete().eq('id',id);
-  if(error){alert('Remove failed: '+error.message);return;}
+  if(error){showFlash('Remove failed: '+error.message,'error');return;}
   await addHistory({field:'mentor-list',mentorId:id,mentorName:m.name,week:null,oldVal:m.name,newVal:'Removed from mentor list'});
   await loadMentors();await loadHistory();render();
+  showFlash(`Removed ${m.name} from the mentor roster.`,'success');
 }
 
 /* ============================================================
@@ -930,18 +994,19 @@ async function saveUserRole(id){
   const is_msa=val==='msa';
   const mentor_id=val.startsWith('mentor:')?val.split(':')[1]:null;
   const {error}=await sb.from('profiles').update({is_msa,mentor_id}).eq('id',id);
-  if(error){alert('Could not update role: '+error.message);return;}
+  if(error){showFlash('Could not update role: '+error.message,'error');return;}
   await loadAllProfiles();
   render();
+  showFlash('Role updated.','success');
 }
 async function handleCreateUser(){
   const fullName=document.getElementById('newUserFullName').value.trim();
   const email=document.getElementById('newUserEmail').value.trim();
   const password=document.getElementById('newUserPassword').value;
   const roleVal=document.getElementById('newUserRole').value;
-  if(!fullName){alert('Enter their full name.');return;}
-  if(!email||!password){alert('Enter an email and a temporary password.');return;}
-  if(password.length<6){alert('Temporary password should be at least 6 characters.');return;}
+  if(!fullName){showFlash('Enter their full name.','warning');return;}
+  if(!email||!password){showFlash('Enter an email and a temporary password.','warning');return;}
+  if(password.length<6){showFlash('Temporary password should be at least 6 characters.','warning');return;}
   const is_msa=roleVal==='msa';
   const mentor_id=roleVal.startsWith('mentor:')?roleVal.split(':')[1]:null;
   const {data:{session}}=await sb.auth.getSession();
@@ -957,15 +1022,15 @@ async function handleCreateUser(){
       })
     });
     const json=await resp.json();
-    if(!resp.ok){alert('Could not create account: '+(json.error||resp.statusText));return;}
-    alert(`Account created for ${fullName}. Share the email and temporary password with them directly — they should change it on first login.`);
+    if(!resp.ok){showFlash('Could not create account: '+(json.error||resp.statusText),'error');return;}
+    showFlash(`Account created for ${fullName}. Share the email and temporary password with them directly — they should change it on first login.`,'success',7000);
     document.getElementById('newUserFullName').value='';
     document.getElementById('newUserEmail').value='';
     document.getElementById('newUserPassword').value='';
     await loadAllProfiles();
     render();
   }catch(e){
-    alert('Request failed: '+e.message+'. Make sure the create-mentor-user Edge Function has been deployed in Supabase.');
+    showFlash('Request failed: '+e.message+'. Make sure the create-mentor-user Edge Function has been deployed in Supabase.','error',7000);
   }
 }
 
@@ -980,7 +1045,7 @@ async function handleDocChange(mentorId,day,value){
   if(oldVal===newVal){render();return;}
   cur[day]=newVal;
   const {error}=await sb.from('documentation').upsert({mentor_id:mentorId,week:currentWeekKey,...cur},{onConflict:'mentor_id,week'});
-  if(error){alert('Save failed: '+error.message);return;}
+  if(error){showFlash('Save failed: '+error.message,'error');return;}
   docData[mentorId]=cur;
   const m=mentors.find(x=>x.id===mentorId);
   await addHistory({field:day,mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal,newVal});
@@ -993,7 +1058,7 @@ async function handleFollowupChange(mentorId,value){
   if(oldVal===value)return;
   cur.followup=value;
   const {error}=await sb.from('documentation').upsert({mentor_id:mentorId,week:currentWeekKey,...cur},{onConflict:'mentor_id,week'});
-  if(error){alert('Save failed: '+error.message);return;}
+  if(error){showFlash('Save failed: '+error.message,'error');return;}
   docData[mentorId]=cur;
   const m=mentors.find(x=>x.id===mentorId);
   await addHistory({field:'followup',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:value});
@@ -1010,7 +1075,7 @@ async function handleReviewedChange(mentorId,value){
   if(oldVal===value)return;
   cur.reviewed=value;
   const {error}=await sb.from('feedback').upsert({mentor_id:mentorId,week:currentWeekKey,reviewed:cur.reviewed,smart_goal:cur.smartGoal||''},{onConflict:'mentor_id,week'});
-  if(error){alert('Save failed: '+error.message);return;}
+  if(error){showFlash('Save failed: '+error.message,'error');return;}
   feedbackData[mentorId]=cur;
   const m=mentors.find(x=>x.id===mentorId);
   await addHistory({field:'reviewed',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:value});
@@ -1023,13 +1088,14 @@ async function handleSmartGoalChange(mentorId,value){
   if(oldVal===value)return;
   cur.smartGoal=value;
   const {error}=await sb.from('feedback').upsert({mentor_id:mentorId,week:currentWeekKey,reviewed:cur.reviewed,smart_goal:cur.smartGoal},{onConflict:'mentor_id,week'});
-  if(error){alert('Save failed: '+error.message);return;}
+  if(error){showFlash('Save failed — your goal was NOT saved: '+error.message,'error',7000);return;}
   feedbackData[mentorId]=cur;
   const m=mentors.find(x=>x.id===mentorId);
   await addHistory({field:'smartGoal',mentorId,mentorName:m?m.name:'',week:currentWeekKey,
     oldVal:oldVal?`"${oldVal.slice(0,40)}${oldVal.length>40?'…':''}"`:'empty',
     newVal:value?`"${value.slice(0,40)}${value.length>40?'…':''}"`:'empty'});
   await loadHistory();render();
+  if(value.trim())showFlash('Goal saved.','success',2500);
 }
 
 /* ============================================================
