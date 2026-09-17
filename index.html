@@ -74,55 +74,59 @@ body{
 .remember-row input[type=checkbox]{width:14px;height:14px;margin:0;}
 .remember-row label{font-size:12px;color:var(--text);margin:0;font-weight:500;cursor:pointer;}
 
-/* Header */
-.header{
-  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
-  color:#fff;
-  margin:0 -20px 22px;
-  padding:22px 20px 18px;
-  border-radius:0 0 16px 16px;
+/* Top bar */
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 4px;margin-bottom:16px;
 }
-.header-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;}
-.header-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;letter-spacing:.2px;}
-.header-sub{font-size:12.5px;color:#aebbd0;margin-top:3px;font-weight:500;}
-.header-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-.week-nav{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 6px;}
-.week-nav button{
-  background:rgba(255,255,255,0.14);border:none;color:#fff;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:13px;
+.topbar-left{display:flex;align-items:center;gap:11px;}
+.app-icon{
+  width:38px;height:38px;border-radius:11px;
+  background:var(teal);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 4px 10px rgba(19,34,56,.18);
+  flex-shrink:0;
 }
-.week-nav button:hover{background:rgba(255,255,255,0.28);}
-.week-label{font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:0 6px;white-space:nowrap;}
-.signout-btn{
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;
-  padding:7px 12px;border-radius:8px;font-size:12.5px;cursor:pointer;font-family:'Inter',sans-serif;
+.app-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;color:var(--navy);line-height:1.15;}
+.app-subtitle{font-size:11.5px;color:var(--muted);font-weight:500;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  height:34px;padding:0 13px;border-radius:9px;border:1px solid var(--border);background:#fff;
+  color:var(--text);cursor:pointer;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;
+  white-space:nowrap;font-family:'Inter',sans-serif;
 }
-.signout-btn:hover{background:rgba(255,255,255,0.2);}
-.role-badge{
-  margin-top:12px;font-size:12.5px;background:rgba(255,255,255,.08);
-  display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.2);
+.icon-btn .glyph{font-size:14px;line-height:1;}
+.icon-btn:hover{background:var(--bg);border-color:#d3d8e0;}
+.icon-btn.tone-teal{border-color:#cfe6e2;background:#f2f9f8;color:var(--teal);}
+.icon-btn.tone-teal:hover{background:#e6f2f0;border-color:var(--teal-2);}
+.icon-btn.tone-neutral{color:var(--muted);}
+.icon-btn.tone-danger{border-color:#f0d3d3;background:var(--red-bg);color:var(--red);}
+.icon-btn.tone-danger:hover{background:#f7d9d9;border-color:var(--red);}
+@media(max-width:640px){
+  .icon-btn span.label{display:none;}
+  .icon-btn{padding:0 10px;}
 }
-.role-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-2);}
-.live-dot{width:6px;height:6px;border-radius:50%;background:#57c785;box-shadow:0 0 0 3px rgba(87,199,133,.25);display:inline-block;margin-right:5px;}
 
-/* Block/Week banner */
-.period-banner{
-  margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;
-  padding:8px 12px;
+/* Status cards row (week / block-week / role) */
+.status-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+.status-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:13px 16px;text-align:center;
 }
-.period-banner .period-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:13.5px;}
-.period-banner .period-sub{font-size:11px;color:#aebbd0;}
-.period-edit-btn{
-  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,.28);color:#fff;
-  padding:4px 10px;border-radius:6px;font-size:11.5px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;
+.status-card-label{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+.status-card-main{display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;color:var(--navy);}
+.status-card-sub{font-size:11px;color:var(--muted);margin-top:4px;font-family:'IBM Plex Mono',monospace; }
+.week-nav-card button{
+  background:var(--bg);border:1px solid var(--border);color:var(--navy);width:24px;height:24px;
+  border-radius:6px;cursor:pointer;font-size:13px;flex-shrink:0;font-family:'Inter',sans-serif;
 }
-.period-edit-btn:hover{background:rgba(255,255,255,0.24);}
-.period-edit-form{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.period-edit-form input{
-  width:64px;padding:5px 7px;border-radius:6px;border:1px solid rgba(255,255,255,.3);
-  background:rgba(255,255,255,.95);font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+.week-nav-card button:hover{background:#e8ebf0;}
+.period-value-btn{background:none;border:none;color:var(--navy);font:inherit;font-weight:700;padding:1px 3px;border-radius:4px;cursor:pointer;}
+.period-value-btn:hover,.period-value-btn:focus{background:var(--bg);outline:none;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#1f9d5c;box-shadow:0 0 0 3px rgba(31,157,92,.18);display:inline-block;flex-shrink:0;}
+@media(max-width:700px){
+  .status-cards{grid-template-columns:1fr;}
 }
-.period-edit-form .btn{padding:5px 11px;font-size:11.5px;}
 
 /* Tabs */
 .tabs{display:flex;gap:8px;margin-bottom:18px;}
@@ -212,10 +216,23 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
 .manage-row input[type=number]{width:80px;padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;}
 .manage-id{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);width:44px;}
 
+.user-link-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.user-link-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+.user-link-info{flex:1;min-width:170px;display:flex;flex-direction:column;font-size:12.5px;}
+.user-link-info strong{color:var(--text);}
+.user-link-info span{color:var(--muted);font-size:11px;margin-top:1px;}
+.user-link-row select{padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:'Inter',sans-serif;background:#fff;}
+
+.add-user-card{background:#fff;border:1px solid var(--border);border-radius:9px;padding:15px 16px;}
+.add-user-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:13.5px;color:var(--navy);}
+.add-user-note{font-size:11.5px;color:var(--muted);margin:2px 0 13px;}
+.add-user-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;}
+.field label{display:block;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px;}
+.field input,.field select{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:'Inter',sans-serif;background:#fff;}
+@media(max-width:560px){.add-user-grid{grid-template-columns:1fr;}}
+
 .activity-toggle{background:none;border:none;color:var(--teal);font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 0;}
 .activity-log{max-height:230px;overflow-y:auto;font-size:12px;margin-top:6px;}
-.period-value-btn{background:none;border:none;color:#fff;font:inherit;font-weight:700;padding:1px 3px;border-radius:4px;cursor:pointer;}
-.period-value-btn:hover,.period-value-btn:focus{background:rgba(255,255,255,.18);outline:none;}
 .past-toolbar{display:grid;grid-template-columns:2fr repeat(3,minmax(120px,1fr));gap:10px;margin:14px 0 18px;}
 .past-toolbar input,.past-toolbar select{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;background:#fff;font-family:'Inter',sans-serif;font-size:12.5px;}
 .past-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:20px;}
@@ -316,7 +333,7 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 @media(max-width:640px){
-  .header-title{font-size:18px;}
+  .app-title{font-size:16px;}
   textarea.smart-goal{width:170px;}
 }
 </style>
@@ -419,25 +436,35 @@ textarea.smart-goal:disabled{background:#f4f5f7;color:var(--muted);}
 <!-- ================= MAIN APP ================= -->
 <div class="app" id="appWrap" style="display:none;">
 
-  <div class="header">
-    <div class="header-top">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="app-icon">🎯</div>
       <div>
-        <div class="header-title">Lead Measures Dashboard</div>
-        <div class="header-sub">Academic coaching · weekly cadence of accountability</div>
-      </div>
-      <div class="header-controls">
-        <div class="week-nav">
-          <button onclick="shiftWeek(-1)" title="Previous week">‹</button>
-          <span class="week-label" id="weekLabel"></span>
-          <button onclick="shiftWeek(1)" title="Next week">›</button>
-        </div>
-        <button class="btn ghost small" id="pastActivityBtn" onclick="showPastActivity()">Past Activity</button>
-        <button class="signout-btn" onclick="openChangePasswordModal()">Change password</button>
-        <button class="signout-btn" onclick="handleLogout()">Sign out</button>
+        <div class="app-title">Lead Measures</div>
+        <div class="app-subtitle">weekly cadence</div>
       </div>
     </div>
-    <div class="role-badge"><span class="live-dot"></span><span id="roleBadgeText"></span></div>
-    <div class="period-banner" id="periodBanner"></div>
+    <div class="topbar-right">
+      <button class="icon-btn tone-teal" id="pastActivityBtn" onclick="showPastActivity()" title="Past Activity"><span class="glyph">🕘</span><span class="label">Past Activity</span></button>
+      <button class="icon-btn tone-neutral" onclick="openChangePasswordModal()" title="Change password"><span class="glyph">🔒</span><span class="label">Password</span></button>
+      <button class="icon-btn tone-danger" onclick="handleLogout()" title="Sign out"><span class="glyph">⎋</span><span class="label">Sign out</span></button>
+    </div>
+  </div>
+
+  <div class="status-cards">
+    <div class="status-card">
+      <div class="status-card-label">Week</div>
+      <div class="status-card-main week-nav-card">
+        <button onclick="shiftWeek(-1)" title="Previous week">‹</button>
+        <span id="weekLabel"></span>
+        <button onclick="shiftWeek(1)" title="Next week">›</button>
+      </div>
+    </div>
+    <div class="status-card" id="periodBanner"></div>
+    <div class="status-card">
+      <div class="status-card-label">Signed in as</div>
+      <div class="status-card-main"><span class="live-dot"></span><span id="roleBadgeText"></span></div>
+    </div>
   </div>
 
   <div class="tabs">
@@ -502,10 +529,8 @@ function getDatePartsInTz(d,timeZone){
 }
 function getMonday(d){
   const {year,month,day,weekday}=getDatePartsInTz(d,REFERENCE_TZ);
-  // Build a UTC-noon date from the reference-timezone date parts so
-  // day-of-month math never crosses a DST/UTC boundary unexpectedly.
   const asUTCNoon=new Date(Date.UTC(year,month-1,day,12,0,0));
-  const diff=weekday===0?-6:1-weekday; // shift back to Monday
+  const diff=weekday===0?-6:1-weekday;
   asUTCNoon.setUTCDate(asUTCNoon.getUTCDate()+diff);
   return asUTCNoon;
 }
@@ -571,7 +596,7 @@ let feedbackData={};
 let historyLog=[];
 let currentWeekDate=new Date();
 let currentWeekKey=weekKeyOf(currentWeekDate);
-let periodLabel=null; // {block, week} for currentWeekKey, if set
+let periodLabel=null;
 let periodEditOpen=false;
 let role={type:'pending'};
 let currentProfile=null;
@@ -818,8 +843,9 @@ function renderPeriodBanner(){
   const blockHtml=isMSA()?`<button class="period-value-btn" onclick="editPeriodValue('block')" title="Edit block number">${block}</button>`:block;
   const weekHtml=isMSA()?`<button class="period-value-btn" onclick="editPeriodValue('week')" title="Edit week number">${week}</button>`:week;
   el.innerHTML=`
-    <span class="period-label">Block ${blockHtml} &nbsp;·&nbsp; Week ${weekHtml}</span>
-    <span class="period-sub">${weekLabelOf(currentWeekDate)}</span>`;
+    <div class="status-card-label">Block · Week</div>
+    <div class="status-card-main">Block ${blockHtml} &nbsp;·&nbsp; Week ${weekHtml}</div>
+    <div class="status-card-sub">${weekLabelOf(currentWeekDate)}</div>`;
 }
 
 async function saveSinglePeriodValue(field,value){
@@ -958,12 +984,12 @@ function renderUsersPanel(){
   const rows=allProfiles.map(p=>{
     const currentVal = p.is_msa ? 'msa' : (p.mentor_id ? `mentor:${p.mentor_id}` : 'unassigned');
     return `
-      <div class="manage-row">
-        <span style="flex:1;min-width:170px;font-size:12.5px;">
-          <strong>${esc(p.display_name || '(no name)')}</strong><br>
-          <span style="color:var(--muted);font-size:11px;">${esc(p.email||'')}</span>
-        </span>
-        <select id="roleSel-${p.id}" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;">
+      <div class="user-link-row">
+        <div class="user-link-info">
+          <strong>${esc(p.display_name || '(no name)')}</strong>
+          <span>${esc(p.email||'')}</span>
+        </div>
+        <select id="roleSel-${p.id}">
           ${roleOptionsFor(currentVal)}
         </select>
         <button class="btn small" onclick="saveUserRole('${p.id}')">Save</button>
@@ -972,20 +998,33 @@ function renderUsersPanel(){
   return `
     <div class="manage-panel">
       <div class="panel-note" style="margin-top:0;">Link each signed-up account to a mentor, or grant MSA access.</div>
-      ${rows || '<div class="log-empty">No accounts have signed in yet.</div>'}
-      <div style="border-top:1px dashed var(--border);margin-top:14px;padding-top:14px;">
-        <div class="panel-note" style="margin-top:0;">Create a new account directly (they can sign in right away):</div>
-        <div class="manage-row">
-          <input type="text" id="newUserFullName" placeholder="Full name">
-          <input type="text" id="newUserEmail" placeholder="Email">
+      <div class="user-link-list">
+        ${rows || '<div class="log-empty">No accounts have signed in yet.</div>'}
+      </div>
+      <div class="add-user-card">
+        <div class="add-user-title">Create a new account</div>
+        <div class="add-user-note">They can sign in right away — share the email and temporary password with them directly.</div>
+        <div class="add-user-grid">
+          <div class="field">
+            <label>Full name</label>
+            <input type="text" id="newUserFullName" placeholder="Jane Mensah">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="text" id="newUserEmail" placeholder="jane@example.com">
+          </div>
+          <div class="field">
+            <label>Temporary password</label>
+            <input type="text" id="newUserPassword" placeholder="At least 6 characters">
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <select id="newUserRole">
+              ${roleOptionsFor('unassigned')}
+            </select>
+          </div>
         </div>
-        <div class="manage-row">
-          <input type="text" id="newUserPassword" placeholder="Temporary password">
-          <select id="newUserRole" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;">
-            ${roleOptionsFor('unassigned')}
-          </select>
-          <button class="btn small" onclick="handleCreateUser()">Create account</button>
-        </div>
+        <button class="btn" style="margin-top:13px;width:100%;" onclick="handleCreateUser()">Create account</button>
       </div>
     </div>`;
 }
@@ -1055,13 +1094,13 @@ async function handleFollowupChange(mentorId,value){
   if(!isMSA())return;
   const cur={...(docData[mentorId]||{mon:0,tue:0,wed:0,thu:0,fri:0,followup:null})};
   const oldVal=cur.followup;
-  if(oldVal===value)return;
-  cur.followup=value;
+  const newVal=oldVal===value?null:value;
+  cur.followup=newVal;
   const {error}=await sb.from('documentation').upsert({mentor_id:mentorId,week:currentWeekKey,...cur},{onConflict:'mentor_id,week'});
   if(error){showFlash('Save failed: '+error.message,'error');return;}
   docData[mentorId]=cur;
   const m=mentors.find(x=>x.id===mentorId);
-  await addHistory({field:'followup',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:value});
+  await addHistory({field:'followup',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:newVal||'not set'});
   await loadHistory();render();
 }
 
@@ -1072,13 +1111,13 @@ async function handleReviewedChange(mentorId,value){
   if(!isMSA() && !isSelf(mentorId))return;
   const cur={...(feedbackData[mentorId]||{reviewed:null,smartGoal:''})};
   const oldVal=cur.reviewed;
-  if(oldVal===value)return;
-  cur.reviewed=value;
+  const newVal=oldVal===value?null:value;
+  cur.reviewed=newVal;
   const {error}=await sb.from('feedback').upsert({mentor_id:mentorId,week:currentWeekKey,reviewed:cur.reviewed,smart_goal:cur.smartGoal||''},{onConflict:'mentor_id,week'});
   if(error){showFlash('Save failed: '+error.message,'error');return;}
   feedbackData[mentorId]=cur;
   const m=mentors.find(x=>x.id===mentorId);
-  await addHistory({field:'reviewed',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:value});
+  await addHistory({field:'reviewed',mentorId,mentorName:m?m.name:'',week:currentWeekKey,oldVal:oldVal||'not set',newVal:newVal||'not set'});
   await loadHistory();render();
 }
 async function handleSmartGoalChange(mentorId,value){
@@ -1172,11 +1211,13 @@ function showHistoryInline(mentorId,field,label){
 function render(){
   document.getElementById('weekLabel').textContent=weekLabelOf(currentWeekDate);
   document.getElementById('roleBadgeText').textContent =
-    isMSA() ? 'Signed in as MSA — full edit access across both tabs'
-            : `Signed in as ${role.name} — you can view team data and edit your own row on the Evaluator Feedback tab`;
+    isMSA() ? 'MSA — full edit access'
+            : `${role.name} — edit your row on Feedback tab`;
   document.getElementById('tabBtn1').classList.toggle('active',appView==='dashboard'&&activeTab===1);
   document.getElementById('tabBtn2').classList.toggle('active',appView==='dashboard'&&activeTab===2);
-  document.getElementById('pastActivityBtn').textContent=appView==='past'?'Back to Dashboard':'Past Activity';
+  document.getElementById('pastActivityBtn').innerHTML=appView==='past'
+    ?'<span class="glyph">←</span><span class="label">Back to Dashboard</span>'
+    :'<span class="glyph">🕘</span><span class="label">Past Activity</span>';
   document.getElementById('pastActivityBtn').onclick=appView==='past'?()=>openActivityWeek(currentWeekKey,activeTab):showPastActivity;
   document.getElementById('tabContent').innerHTML = appView==='past' ? renderPastActivityPage() : (activeTab===1 ? renderTab1() : renderTab2());
   renderPeriodBanner();
